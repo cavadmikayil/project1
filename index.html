@@ -10,10 +10,37 @@
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&family=Orbitron:wght@700&display=swap" rel="stylesheet">
     <style>
-        /* --- SARI VƏ QARA RƏNG PALETRASI --- */
+        /* --- ƏSAS STİLLƏR --- */
+        :root {
+            --bg-primary: #f4f4f5;
+            --bg-secondary: #ffffff;
+            --bg-sidebar: #18181b;
+            --bg-sidebar-hover: #27272a;
+            --text-primary: #18181b;
+            --text-secondary: #3f3f46;
+            --text-sidebar: #d4d4d8;
+            --border-color: #e5e7eb;
+            --accent-color: #f59e0b;
+            --accent-color-active: #fbbf24;
+        }
+
+        .dark {
+            --bg-primary: #18181b;
+            --bg-secondary: #27272a;
+            --bg-sidebar: #18181b;
+            --bg-sidebar-hover: #3f3f46;
+            --text-primary: #f4f4f5;
+            --text-secondary: #a1a1aa;
+            --text-sidebar: #d4d4d8;
+            --border-color: #3f3f46;
+            --accent-color: #f59e0b;
+            --accent-color-active: #fbbf24;
+        }
+        
         body {
             font-family: 'Poppins', sans-serif;
-            background-color: #f4f4f5;
+            background-color: var(--bg-primary);
+            color: var(--text-primary);
         }
 
         /* Login Paneli */
@@ -36,7 +63,7 @@
         /* Sidebar (Açılan Menyu) */
         #sidebar {
             transition: transform 0.3s ease-in-out;
-            background-color: #18181b;
+            background-color: var(--bg-sidebar);
             box-shadow: 0 4px 12px rgba(0,0,0,0.1);
             display: flex;
             flex-direction: column;
@@ -45,7 +72,7 @@
         
         #sidebar .sidebar-header {
             padding: 1.5rem;
-            background: #18181b;
+            background: var(--bg-sidebar);
             color: white;
             flex-shrink: 0;
             border-bottom: 1px solid #3f3f46;
@@ -73,20 +100,20 @@
             padding: 1rem 1.5rem;
             transition: all 0.2s ease-in-out;
             border-left: 4px solid transparent;
-            color: #d4d4d8;
+            color: var(--text-sidebar);
             font-weight: 500;
         }
 
         #sidebar nav a:hover {
-            background-color: #27272a;
-            color: #fcd34d;
+            background-color: var(--bg-sidebar-hover);
+            color: var(--accent-color-active);
             border-left-color: #4b5563;
         }
         
         #sidebar nav a.active {
-            background: #27272a;
-            color: #fbbf24;
-            border-left-color: #f59e0b;
+            background: var(--bg-sidebar-hover);
+            color: var(--accent-color-active);
+            border-left-color: var(--accent-color);
             font-weight: 600;
         }
 
@@ -96,13 +123,13 @@
         }
         
         #sidebar nav a.active i {
-             color: #f59e0b;
+             color: var(--accent-color);
         }
         
         .social-footer {
             flex-shrink: 0;
             border-top: 1px solid #3f3f46;
-            background-color: #18181b;
+            background-color: var(--bg-sidebar);
         }
         
         .social-footer a i {
@@ -114,12 +141,13 @@
         }
 
         header {
-            background-color: #ffffff;
+            background-color: var(--bg-secondary);
             box-shadow: 0 2px 4px rgba(0,0,0,0.05);
+            border-bottom: 1px solid var(--border-color);
         }
 
         #page-title {
-            color: #18181b;
+            color: var(--text-primary);
             font-weight: 600;
         }
 
@@ -127,44 +155,44 @@
             cursor: pointer;
             transition: all 0.2s ease-in-out;
             box-shadow: 0 1px 3px rgba(0,0,0,0.05);
-            border: 1px solid #e5e7eb;
-            background-color: #fff;
+            border: 1px solid var(--border-color);
+            background-color: var(--bg-secondary);
         }
         .clickable-list-item:hover {
             transform: translateY(-4px) scale(1.02);
             box-shadow: 0 6px 15px rgba(0,0,0,0.1);
-            border-color: #f59e0b;
+            border-color: var(--accent-color);
         }
         .clickable-list-item .fa-chevron-right {
             transition: transform 0.2s ease;
         }
         .clickable-list-item:hover .fa-chevron-right {
             transform: translateX(5px);
-            color: #f59e0b;
+            color: var(--accent-color);
         }
 
-        #back-to-list-btn, #check-exam-btn {
+        #back-to-list-btn, #check-exam-btn, #reset-progress-btn {
             transition: all 0.2s ease-in-out;
             background: linear-gradient(45deg, #f59e0b, #ea580c);
             color: white;
             box-shadow: 0 4px 10px rgba(245, 158, 11, 0.3);
         }
-        #back-to-list-btn:hover, #check-exam-btn:hover {
+        #back-to-list-btn:hover, #check-exam-btn:hover, #reset-progress-btn:hover {
             transform: translateY(-2px);
             box-shadow: 0 6px 15px rgba(245, 158, 11, 0.4);
         }
 
         .article-card {
-            background-color: #ffffff;
-            border: 1px solid #e5e7eb;
+            background-color: var(--bg-secondary);
+            border: 1px solid var(--border-color);
             box-shadow: 0 2px 8px rgba(0,0,0,0.07);
-            border-left: 5px solid #f59e0b;
+            border-left: 5px solid var(--accent-color);
         }
         .article-card h3 {
-            color: #18181b;
+            color: var(--text-primary);
         }
         .article-card .article-content {
-            color: #3f3f46;
+            color: var(--text-secondary);
             line-height: 1.8;
         }
         .article-card .article-content b {
@@ -179,6 +207,22 @@
             white-space: pre-wrap;
             word-wrap: break-word;
             font-family: 'Courier New', Courier, monospace;
+            position: relative;
+        }
+        .copy-code-btn {
+            position: absolute;
+            top: 0.5rem;
+            right: 0.5rem;
+            background-color: #52525b;
+            color: #e4e4e7;
+            border: none;
+            padding: 0.25rem 0.5rem;
+            border-radius: 0.25rem;
+            cursor: pointer;
+            font-size: 0.8rem;
+        }
+        .copy-code-btn:hover {
+            background-color: #71717a;
         }
         .article-card .article-content h4 {
             font-size: 1.25rem;
@@ -191,64 +235,36 @@
         }
 
         /* İmtahan stilləri */
-        .question-correct {
-            background-color: #dcfce7; /* Green */
-            border-left-color: #22c55e;
-        }
-        .question-incorrect {
-            background-color: #fee2e2; /* Red */
-            border-left-color: #ef4444;
-        }
-        .question-unanswered {
-             background-color: #ffedd5; /* Orange */
-             border-left-color: #f97316;
-        }
-        .correct-answer-text {
-            color: #16a34a;
-            font-weight: bold;
-        }
+        .question-correct { background-color: #dcfce7; border-left-color: #22c55e; }
+        .dark .question-correct { background-color: #143b29; }
+        .question-incorrect { background-color: #fee2e2; border-left-color: #ef4444; }
+        .dark .question-incorrect { background-color: #451a24; }
+        .question-unanswered { background-color: #ffedd5; border-left-color: #f97316; }
+        .dark .question-unanswered { background-color: #4a2c1b; }
+        .correct-answer-text { color: #16a34a; font-weight: bold; }
         
         /* Course Materials Accordion */
-        .course-header {
-            cursor: pointer;
-            transition: background-color 0.2s ease-in-out;
-        }
-        .course-header:hover {
-            background-color: #fef3c7;
-        }
-        .course-header i {
-            transition: transform 0.3s ease-in-out;
-        }
-        .course-header.active i {
-            transform: rotate(90deg);
-        }
-        .chapter-list {
-            max-height: 0;
-            overflow: hidden;
-            transition: max-height 0.5s ease-in-out;
-        }
-        .chapter-link.visited {
-            background-color: #27272a;
-            border-color: #4ade80;
-            color: #a3e635;
-        }
-        .chapter-link.visited:hover {
-            background-color: #3f3f46;
-        }
+        .course-header { cursor: pointer; transition: background-color 0.2s ease-in-out; }
+        .course-header:hover { background-color: #fef3c7; }
+        .dark .course-header:hover { background-color: #3f3f46; }
+        .course-header i { transition: transform 0.3s ease-in-out; }
+        .course-header.active i { transform: rotate(90deg); }
+        .chapter-list { max-height: 0; overflow: hidden; transition: max-height 0.5s ease-in-out; }
+        .chapter-link.visited { background-color: #27272a; border-color: #4ade80; color: #a3e635; }
+        .chapter-link.visited:hover { background-color: #3f3f46; }
 
-        ::-webkit-scrollbar {
-            width: 10px;
-        }
-        ::-webkit-scrollbar-track {
-            background: #e4e4e7;
-        }
-        ::-webkit-scrollbar-thumb {
-            background: #fcd34d;
-            border-radius: 10px;
-        }
-        ::-webkit-scrollbar-thumb:hover {
-            background: #f59e0b;
-        }
+        /* Axtarış */
+        #search-input { background-color: var(--bg-primary); border: 1px solid var(--border-color); }
+        #search-input:focus { border-color: var(--accent-color); outline: none; }
+
+        /* Tema Düyməsi */
+        #theme-toggle { background-color: var(--bg-primary); border: 1px solid var(--border-color); color: var(--text-secondary); }
+
+        ::-webkit-scrollbar { width: 10px; }
+        ::-webkit-scrollbar-track { background: #e4e4e7; }
+        .dark ::-webkit-scrollbar-track { background: #3f3f46; }
+        ::-webkit-scrollbar-thumb { background: #fcd34d; border-radius: 10px; }
+        ::-webkit-scrollbar-thumb:hover { background: #f59e0b; }
     </style>
 </head>
 <body class="bg-gray-100">
@@ -399,7 +415,15 @@
                     <i class="fas fa-bars text-2xl"></i>
                 </button>
                 <div class="text-xl" id="page-title">Ana Səhifə</div>
-                <div class="w-10 h-10"></div>
+                <div class="flex items-center gap-4">
+                    <div class="relative hidden md:block">
+                        <input type="text" id="search-input" placeholder="Axtar..." class="w-48 lg:w-64 pl-10 pr-4 py-2 rounded-lg text-sm focus:outline-none transition-all duration-300">
+                        <i class="fas fa-search absolute left-3 top-1/2 -translate-y-1/2 text-gray-400"></i>
+                    </div>
+                    <button id="theme-toggle" class="h-10 w-10 flex items-center justify-center rounded-full transition-colors duration-300">
+                        <i class="fas fa-moon"></i>
+                    </button>
+                </div>
             </header>
             <main id="content-area" class="p-4 md:p-6" style="height: calc(100vh - 72px); overflow-y: auto;"></main>
         </div>
@@ -509,6 +533,8 @@
         const contentArea = document.getElementById('content-area');
         const pageTitle = document.getElementById('page-title');
         const allLinks = Array.from(document.querySelectorAll('nav a'));
+        const searchInput = document.getElementById('search-input');
+        const themeToggle = document.getElementById('theme-toggle');
 
         const CORRECT_USERNAME = "cavadmikayil";
         const CORRECT_PASSWORD = "1923";
@@ -617,8 +643,13 @@
 
         function showCourseLinktreePage() {
             pageTitle.textContent = "Dərs Vəsaitləri";
-            let linksHTML = `<div class="max-w-4xl mx-auto space-y-4">`;
-            const progress = getCourseProgress();
+            let linksHTML = `<div class="max-w-4xl mx-auto space-y-4">
+                                <div class="text-right mb-4">
+                                    <button id="reset-progress-btn" class="text-sm font-semibold py-2 px-4 rounded-lg">
+                                        <i class="fas fa-trash-alt mr-2"></i>Tərəqqini Sıfırla
+                                    </button>
+                                </div>
+                            `;
 
             const sections = {
                 "IT Helpdesk Dərsləri": {key: 'helpdesk', count: 40},
@@ -626,15 +657,17 @@
                 "Sistem Administratoru Dərsləri": {key: 'sysadmin', count: 40}
             };
             
+            const progress = getCourseProgress();
+
             for (const sectionTitle in sections) {
                 const sectionData = sections[sectionTitle];
                 linksHTML += `
-                    <div class="bg-white rounded-lg shadow-md">
+                    <div class="bg-white dark:bg-zinc-800 rounded-lg shadow-md">
                         <h3 class="course-header flex justify-between items-center p-4 font-bold text-lg text-amber-600">
                             <span>${sectionTitle}</span>
                             <i class="fas fa-chevron-right"></i>
                         </h3>
-                        <div class="chapter-list border-t border-gray-200">
+                        <div class="chapter-list border-t border-gray-200 dark:border-zinc-700">
                             <div class="p-4 grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 gap-4">
                 `;
                 for (let i = 1; i <= sectionData.count; i++) {
@@ -690,7 +723,7 @@
             pageTitle.textContent = category.title;
             let listHTML = '<div class="space-y-4">';
             category.articles.forEach(article => {
-                listHTML += `<div class="bg-white p-5 rounded-lg clickable-list-item flex justify-between items-center" data-category="${categoryKey}" data-article-id="${article.id}"><span class="font-semibold text-gray-800">${article.title}</span><i class="fas fa-chevron-right text-gray-400"></i></div>`;
+                listHTML += `<div class="bg-white dark:bg-zinc-800 p-5 rounded-lg clickable-list-item flex justify-between items-center" data-category="${categoryKey}" data-article-id="${article.id}"><span class="font-semibold text-gray-800 dark:text-gray-200">${article.title}</span><i class="fas fa-chevron-right text-gray-400"></i></div>`;
             });
             listHTML += '</div>';
             contentArea.innerHTML = listHTML;
@@ -712,8 +745,11 @@
             const examData = allContent.exam;
             pageTitle.textContent = examData.title;
             let listHTML = '<div class="space-y-4">';
+            const savedResults = JSON.parse(localStorage.getItem('examResults')) || {};
             examData.tests.forEach((test, index) => {
-                listHTML += `<div class="bg-white p-5 rounded-lg clickable-list-item flex justify-between items-center" data-test-id="${index}"><span class="font-semibold text-gray-800">${test.title}</span><i class="fas fa-chevron-right text-gray-400"></i></div>`;
+                const result = savedResults[index];
+                const scoreHTML = result ? `<span class="font-bold text-amber-600">${result.score}/${result.total}</span>` : '';
+                listHTML += `<div class="bg-white dark:bg-zinc-800 p-5 rounded-lg clickable-list-item flex justify-between items-center" data-test-id="${index}"><span class="font-semibold text-gray-800 dark:text-gray-200">${test.title}</span>${scoreHTML}</div>`;
             });
             listHTML += '</div>';
             contentArea.innerHTML = listHTML;
@@ -732,13 +768,13 @@
                                 <div id="quiz-container" class="space-y-6">`;
             test.questions.forEach((q, index) => {
                 examHTML += `
-                    <div id="question-${index}" class="bg-white p-5 rounded-lg shadow-md border-l-4 border-gray-200 transition-colors duration-300">
+                    <div id="question-${index}" class="bg-white dark:bg-zinc-800 p-5 rounded-lg shadow-md border-l-4 border-gray-200 dark:border-zinc-700 transition-colors duration-300">
                         <p class="font-semibold text-lg mb-4">${index + 1}. ${q.question}</p>
                         <div class="space-y-2">`;
                 q.options.forEach((option, optionIndex) => {
                     examHTML += `
-                        <label class="flex items-center p-3 rounded-lg hover:bg-gray-100 cursor-pointer">
-                            <input type="radio" name="question${index}" value="${optionIndex}" class="mr-3 h-4 w-4 text-amber-600 focus:ring-amber-500 border-gray-300">
+                        <label class="flex items-center p-3 rounded-lg hover:bg-gray-100 dark:hover:bg-zinc-700 cursor-pointer">
+                            <input type="radio" name="question${index}" value="${optionIndex}" class="mr-3 h-4 w-4 text-amber-600 focus:ring-amber-500 border-gray-300 dark:border-zinc-600 dark:bg-zinc-700">
                             <span>${option}</span>
                         </label>`;
                 });
@@ -778,10 +814,63 @@
             });
             const resultEl = document.getElementById('exam-result');
             resultEl.textContent = `Nəticə: ${test.questions.length} sualdan ${score} doğru.`;
+            
+            // Nəticəni yadda saxla
+            const savedResults = JSON.parse(localStorage.getItem('examResults')) || {};
+            savedResults[testIndex] = { score: score, total: test.questions.length };
+            localStorage.setItem('examResults', JSON.stringify(savedResults));
+        }
+
+        function handleSearch(e) {
+            const searchTerm = e.target.value.toLowerCase().trim();
+            if (searchTerm.length < 3) {
+                if(pageTitle.textContent.includes('Axtarış Nəticələri')) showHomePage();
+                return;
+            }
+            const results = [];
+            for (const categoryKey in allContent) {
+                if (allContent[categoryKey].articles) {
+                    allContent[categoryKey].articles.forEach(article => {
+                        if (article.title.toLowerCase().includes(searchTerm) || article.content.toLowerCase().includes(searchTerm)) {
+                            results.push({ ...article, categoryKey: categoryKey, categoryTitle: allContent[categoryKey].title });
+                        }
+                    });
+                }
+            }
+            showSearchResultsPage(results, searchTerm);
+        }
+
+        function showSearchResultsPage(results, searchTerm) {
+            pageTitle.textContent = `'${searchTerm}' üçün Axtarış Nəticələri`;
+            setActiveLink(null);
+            let resultsHTML = `<div class="space-y-4">`;
+            if (results.length > 0) {
+                results.forEach(result => {
+                    resultsHTML += `
+                        <div class="bg-white dark:bg-zinc-800 p-5 rounded-lg clickable-list-item" data-category="${result.categoryKey}" data-article-id="${result.id}">
+                            <p class="text-sm text-amber-600 font-semibold">${result.categoryTitle}</p>
+                            <h4 class="font-bold text-lg">${result.title}</h4>
+                        </div>
+                    `;
+                });
+            } else {
+                resultsHTML += `<div class="bg-white dark:bg-zinc-800 p-5 rounded-lg text-center">Axtarışınıza uyğun nəticə tapılmadı.</div>`;
+            }
+            resultsHTML += `</div>`;
+            contentArea.innerHTML = resultsHTML;
         }
 
         // --- HADİSƏ DİNLEYİCİLƏRİ ---
         document.addEventListener('DOMContentLoaded', () => {
+            // Tema yoxlanışı
+            if (localStorage.getItem('theme') === 'dark') {
+                document.documentElement.classList.add('dark');
+                themeToggle.innerHTML = '<i class="fas fa-sun"></i>';
+            } else {
+                document.documentElement.classList.remove('dark');
+                themeToggle.innerHTML = '<i class="fas fa-moon"></i>';
+            }
+            // Login yoxlanışı
             if (localStorage.getItem('rememberedUser') === 'true') {
                 loginContainer.classList.add('hidden');
                 appContainer.classList.remove('hidden');
@@ -816,6 +905,18 @@
         coursePasswordInput.addEventListener('keyup', (e) => { if (e.key === 'Enter') handleCourseLogin(); });
         courseUsernameInput.addEventListener('keyup', (e) => { if (e.key === 'Enter') handleCourseLogin(); });
 
+        searchInput.addEventListener('input', handleSearch);
+        themeToggle.addEventListener('click', () => {
+            document.documentElement.classList.toggle('dark');
+            if (document.documentElement.classList.contains('dark')) {
+                localStorage.setItem('theme', 'dark');
+                themeToggle.innerHTML = '<i class="fas fa-sun"></i>';
+            } else {
+                localStorage.setItem('theme', 'light');
+                themeToggle.innerHTML = '<i class="fas fa-moon"></i>';
+            }
+        });
+
         allLinks.forEach(link => {
             const categoryKey = link.id.replace('-link', '');
             if (allContent[categoryKey] && !['exam', 'labs', 'course-materials'].includes(categoryKey)) {
@@ -834,6 +935,8 @@
             const backToExamListButton = e.target.closest('#back-to-exam-list-btn');
             const courseHeader = e.target.closest('.course-header');
             const chapterLink = e.target.closest('.chapter-link');
+            const copyBtn = e.target.closest('.copy-code-btn');
+            const resetProgressBtn = e.target.closest('#reset-progress-btn');
 
             if (articleItem) {
                 showSingleArticlePage(articleItem.dataset.category, articleItem.dataset.articleId);
@@ -867,8 +970,25 @@
                 }
                 chapterLink.classList.add('visited');
             }
+            if(copyBtn) {
+                const pre = copyBtn.parentElement;
+                const code = pre.querySelector('code').innerText;
+                const textArea = document.createElement('textarea');
+                textArea.value = code;
+                document.body.appendChild(textArea);
+                textArea.select();
+                document.execCommand('copy');
+                document.body.removeChild(textArea);
+                copyBtn.innerHTML = '<i class="fas fa-check"></i>';
+                setTimeout(() => { copyBtn.innerHTML = '<i class="fas fa-copy"></i>'; }, 2000);
+            }
+            if(resetProgressBtn) {
+                localStorage.removeItem('courseProgress');
+                showCourseLinktreePage();
+            }
         });
 
     </script>
 </body>
 </html>
+
