@@ -227,6 +227,14 @@
             overflow: hidden;
             transition: max-height 0.5s ease-in-out;
         }
+        .chapter-link.visited {
+            background-color: #27272a;
+            border-color: #4ade80;
+            color: #a3e635;
+        }
+        .chapter-link.visited:hover {
+            background-color: #3f3f46;
+        }
 
         ::-webkit-scrollbar {
             width: 10px;
@@ -259,6 +267,10 @@
                 <div>
                     <input type="password" id="password-input" placeholder="Şifrə" class="w-full px-4 py-3 bg-gray-700 text-white border border-gray-600 rounded-lg focus:outline-none focus:ring-2 focus:ring-amber-500">
                 </div>
+                <div class="flex items-center">
+                    <input id="remember-me-checkbox" type="checkbox" class="h-4 w-4 rounded border-gray-500 bg-gray-600 text-amber-500 focus:ring-amber-600">
+                    <label for="remember-me-checkbox" class="ml-2 block text-sm text-gray-300">Məni xatırla</label>
+                </div>
                 <p id="error-message" class="text-red-500 text-sm hidden text-center">İstifadəçi adı və ya şifrə yanlışdır.</p>
                 <p id="lockout-message" class="text-amber-400 text-sm hidden text-center"></p>
                 <button id="login-btn" class="w-full py-3 text-white font-bold rounded-lg hover:opacity-90 transition-opacity">Daxil Ol</button>
@@ -280,6 +292,10 @@
                 </div>
                  <div>
                     <input type="password" id="course-password-input" placeholder="Şifrə" class="w-full px-4 py-3 bg-gray-700 text-white border border-gray-600 rounded-lg focus:outline-none focus:ring-2 focus:ring-amber-500">
+                </div>
+                 <div class="flex items-center">
+                    <input id="remember-course-checkbox" type="checkbox" class="h-4 w-4 rounded border-gray-500 bg-gray-600 text-amber-500 focus:ring-amber-600">
+                    <label for="remember-course-checkbox" class="ml-2 block text-sm text-gray-300">Məni xatırla</label>
                 </div>
                 <p id="course-error-message" class="text-red-500 text-sm hidden">İstifadəçi adı və ya şifrə yanlışdır.</p>
                 <button id="course-login-btn" class="w-full py-3 text-white font-bold rounded-lg hover:opacity-90 transition-opacity">Daxil Ol</button>
@@ -476,6 +492,7 @@
         const loginBtn = document.getElementById('login-btn');
         const errorMessage = document.getElementById('error-message');
         const lockoutMessage = document.getElementById('lockout-message');
+        const rememberMeCheckbox = document.getElementById('remember-me-checkbox');
 
         const courseLoginContainer = document.getElementById('course-login-container');
         const closeCourseLoginBtn = document.getElementById('close-course-login-btn');
@@ -484,6 +501,7 @@
         const courseLoginBtn = document.getElementById('course-login-btn');
         const courseErrorMessage = document.getElementById('course-error-message');
         const backFromCourseLoginBtn = document.getElementById('back-from-course-login-btn');
+        const rememberCourseCheckbox = document.getElementById('remember-course-checkbox');
         
         const menuBtn = document.getElementById('menu-btn');
         const sidebar = document.getElementById('sidebar');
@@ -527,6 +545,11 @@
             }
 
             if (usernameInput.value === CORRECT_USERNAME && passwordInput.value === CORRECT_PASSWORD) {
+                if (rememberMeCheckbox.checked) {
+                    localStorage.setItem('rememberedUser', 'true');
+                } else {
+                    localStorage.removeItem('rememberedUser');
+                }
                 loginContainer.classList.add('hidden');
                 appContainer.classList.remove('hidden');
                 errorMessage.classList.add('hidden');
@@ -547,6 +570,9 @@
         }
 
         function handleLogout() {
+            // Log Out düyməsi artıq "Məni xatırla" seçimlərini silir.
+            localStorage.removeItem('rememberedUser');
+            localStorage.removeItem('rememberedCourseUser');
             appContainer.classList.add('hidden');
             loginContainer.classList.remove('hidden');
             usernameInput.value = '';
@@ -566,6 +592,11 @@
 
         function handleCourseLogin() {
             if (courseUsernameInput.value === COURSE_USERNAME && coursePasswordInput.value === COURSE_PASSWORD) {
+                if(rememberCourseCheckbox.checked) {
+                    localStorage.setItem('rememberedCourseUser', 'true');
+                } else {
+                    localStorage.removeItem('rememberedCourseUser');
+                }
                 hideCourseLoginPage();
                 showCourseLinktreePage();
             } else {
@@ -573,17 +604,30 @@
             }
         }
         
+        function getCourseProgress() {
+            const progress = localStorage.getItem('courseProgress');
+            return progress ? JSON.parse(progress) : {};
+        }
+
+        function saveCourseProgress(chapterId) {
+            const progress = getCourseProgress();
+            progress[chapterId] = true;
+            localStorage.setItem('courseProgress', JSON.stringify(progress));
+        }
+
         function showCourseLinktreePage() {
             pageTitle.textContent = "Dərs Vəsaitləri";
             let linksHTML = `<div class="max-w-4xl mx-auto space-y-4">`;
+            const progress = getCourseProgress();
 
             const sections = {
-                "IT Helpdesk Dərsləri": 40,
-                "Şəbəkə İnzibatçılığı Dərsləri": 40,
-                "Sistem Administratoru Dərsləri": 40
+                "IT Helpdesk Dərsləri": {key: 'helpdesk', count: 40},
+                "Şəbəkə İnzibatçılığı Dərsləri": {key: 'network-admin', count: 40},
+                "Sistem Administratoru Dərsləri": {key: 'sysadmin', count: 40}
             };
             
             for (const sectionTitle in sections) {
+                const sectionData = sections[sectionTitle];
                 linksHTML += `
                     <div class="bg-white rounded-lg shadow-md">
                         <h3 class="course-header flex justify-between items-center p-4 font-bold text-lg text-amber-600">
@@ -593,7 +637,9 @@
                         <div class="chapter-list border-t border-gray-200">
                             <div class="p-4 grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 gap-4">
                 `;
-                for (let i = 1; i <= sections[sectionTitle]; i++) {
+                for (let i = 1; i <= sectionData.count; i++) {
+                    const chapterId = `${sectionData.key}-${i}`;
+                    const isVisited = progress[chapterId];
                     let link = '#';
                     let isClickable = false;
                     if (sectionTitle === "IT Helpdesk Dərsləri" && i === 1) {
@@ -601,8 +647,8 @@
                         isClickable = true;
                     }
                     linksHTML += `
-                        <a href="${link}" ${isClickable ? 'target="_blank" rel="noopener noreferrer"' : ''} class="block p-3 font-semibold text-center text-sm rounded-lg linktree-link ${!isClickable ? 'opacity-50 cursor-not-allowed' : ''}">
-                            Chapter ${i}
+                        <a href="${link}" data-chapter-id="${chapterId}" ${isClickable ? 'target="_blank" rel="noopener noreferrer"' : ''} class="chapter-link flex items-center justify-center p-3 font-semibold text-center text-sm rounded-lg linktree-link ${!isClickable ? 'opacity-50 cursor-not-allowed' : ''} ${isVisited ? 'visited' : ''}">
+                           ${isVisited ? '<i class="fas fa-check-circle mr-2"></i>' : ''} <span>Chapter ${i}</span>
                         </a>
                     `;
                 }
@@ -735,6 +781,14 @@
         }
 
         // --- HADİSƏ DİNLEYİCİLƏRİ ---
+        document.addEventListener('DOMContentLoaded', () => {
+            if (localStorage.getItem('rememberedUser') === 'true') {
+                loginContainer.classList.add('hidden');
+                appContainer.classList.remove('hidden');
+                showHomePage();
+            }
+        });
+
         loginBtn.addEventListener('click', handleLogin);
         passwordInput.addEventListener('keyup', (e) => { if (e.key === 'Enter') handleLogin(); });
         usernameInput.addEventListener('keyup', (e) => { if (e.key === 'Enter') handleLogin(); });
@@ -749,7 +803,11 @@
         
         document.getElementById('course-materials-link').addEventListener('click', (e) => {
             e.preventDefault();
-            showCourseLoginPage();
+            if (localStorage.getItem('rememberedCourseUser') === 'true') {
+                showCourseLinktreePage();
+            } else {
+                showCourseLoginPage();
+            }
         });
 
         closeCourseLoginBtn.addEventListener('click', hideCourseLoginPage);
@@ -775,6 +833,7 @@
             const testItem = e.target.closest('[data-test-id]');
             const backToExamListButton = e.target.closest('#back-to-exam-list-btn');
             const courseHeader = e.target.closest('.course-header');
+            const chapterLink = e.target.closest('.chapter-link');
 
             if (articleItem) {
                 showSingleArticlePage(articleItem.dataset.category, articleItem.dataset.articleId);
@@ -793,13 +852,20 @@
             }
             if (courseHeader) {
                 const chapterList = courseHeader.nextElementSibling;
-                const icon = courseHeader.querySelector('i');
                 courseHeader.classList.toggle('active');
                 if (chapterList.style.maxHeight) {
                     chapterList.style.maxHeight = null;
                 } else {
                     chapterList.style.maxHeight = chapterList.scrollHeight + "px";
                 }
+            }
+            if (chapterLink && chapterLink.href.endsWith('#') === false) {
+                const chapterId = chapterLink.dataset.chapterId;
+                saveCourseProgress(chapterId);
+                if(!chapterLink.querySelector('.fa-check-circle')) {
+                    chapterLink.insertAdjacentHTML('afterbegin', '<i class="fas fa-check-circle mr-2"></i>');
+                }
+                chapterLink.classList.add('visited');
             }
         });
 
