@@ -9,6 +9,7 @@
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&family=Orbitron:wght@700&display=swap" rel="stylesheet">
+    <script src="https://cdn.jsdelivr.net/npm/apexcharts"></script>
     <style>
         /* --- ƏSAS STİLLƏR --- */
         :root {
@@ -171,13 +172,13 @@
             color: var(--accent-color);
         }
 
-        #back-to-list-btn, #check-exam-btn, #reset-progress-btn {
+        #back-to-list-btn, #reset-progress-btn {
             transition: all 0.2s ease-in-out;
             background: linear-gradient(45deg, #f59e0b, #ea580c);
             color: white;
             box-shadow: 0 4px 10px rgba(245, 158, 11, 0.3);
         }
-        #back-to-list-btn:hover, #check-exam-btn:hover, #reset-progress-btn:hover {
+        #back-to-list-btn:hover, #reset-progress-btn:hover {
             transform: translateY(-2px);
             box-shadow: 0 6px 15px rgba(245, 158, 11, 0.4);
         }
@@ -233,15 +234,6 @@
             margin-top: 1.5rem;
             margin-bottom: 1rem;
         }
-
-        /* İmtahan stilləri */
-        .question-correct { background-color: #dcfce7; border-left-color: #22c55e; }
-        .dark .question-correct { background-color: #143b29; }
-        .question-incorrect { background-color: #fee2e2; border-left-color: #ef4444; }
-        .dark .question-incorrect { background-color: #451a24; }
-        .question-unanswered { background-color: #ffedd5; border-left-color: #f97316; }
-        .dark .question-unanswered { background-color: #4a2c1b; }
-        .correct-answer-text { color: #16a34a; font-weight: bold; }
         
         /* Course Materials Accordion */
         .course-header { cursor: pointer; transition: background-color 0.2s ease-in-out; }
@@ -265,6 +257,38 @@
         .dark ::-webkit-scrollbar-track { background: #3f3f46; }
         ::-webkit-scrollbar-thumb { background: #fcd34d; border-radius: 10px; }
         ::-webkit-scrollbar-thumb:hover { background: #f59e0b; }
+
+        /* --- YENİ İMTAHAN MODULU STİLLƏRİ --- */
+        #content-area .gradient-bg {
+            background: linear-gradient(120deg, #1a1a1a 0%, #333333 100%);
+        }
+        #content-area .card-hover {
+            transition: all 0.3s ease;
+        }
+        #content-area .card-hover:hover {
+            transform: translateY(-8px) scale(1.03);
+            box-shadow: 0 15px 30px -5px rgba(251, 191, 36, 0.2);
+        }
+        #content-area .page {
+            animation: fadeIn 0.5s ease-in-out;
+        }
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(10px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+        #content-area .input-with-icon {
+            position: relative;
+        }
+        #content-area .input-with-icon svg {
+            position: absolute;
+            left: 1rem;
+            top: 50%;
+            transform: translateY(-50%);
+            color: #9ca3af;
+        }
+        #content-area .input-with-icon input {
+            padding-left: 3rem;
+        }
     </style>
 </head>
 <body class="bg-gray-100">
@@ -425,72 +449,44 @@
                     </button>
                 </div>
             </header>
-            <main id="content-area" class="p-4 md:p-6" style="height: calc(100vh - 72px); overflow-y: auto;"></main>
+            <main id="content-area" class="p-0 md:p-0 dark:gradient-bg" style="height: calc(100vh - 72px); overflow-y: auto;"></main>
         </div>
     </div>
     <div id="overlay" class="fixed inset-0 bg-black opacity-50 z-20 hidden md:hidden"></div>
 
 
     <script>
-        // --- BÜTÜN MƏQALƏLƏR VƏ TESTLƏR ÜÇÜN MƏLUMAT BAZASI ---
-        const questionPool = [
-            { question: "OSI modelinin 3-cü səviyyəsi hansıdır?", options: ["Physical", "Data Link", "Network", "Transport"], answer: 2 },
-            { question: "Hansı protokol faylların ötürülməsi üçün istifadə olunur?", options: ["HTTP", "FTP", "SMTP", "DNS"], answer: 1 },
-            { question: "Bir kompüterin şəbəkədəki unikal fiziki ünvanı nə adlanır?", options: ["IP Address", "Subnet Mask", "MAC Address", "Gateway"], answer: 2 },
-            { question: "Hansı cihaz fərqli şəbəkələri bir-birinə bağlayır?", options: ["Hub", "Switch", "Router", "Repeater"], answer: 2 },
-            { question: "TCP/IP modelində hansı səviyyə yoxdur?", options: ["Application", "Transport", "Internet", "Presentation"], answer: 3 },
-            { question: "192.168.1.1 hansı sinif IP ünvanıdır?", options: ["Class A", "Class B", "Class C", "Class D"], answer: 2 },
-            { question: "UDP hansı səviyyənin protokoludur?", options: ["Network", "Transport", "Application", "Data Link"], answer: 1 },
-            { question: "Subnet mask 255.255.255.0 üçün CIDR notation hansıdır?", options: ["/8", "/16", "/24", "/32"], answer: 2 },
-            { question: "Hansı təhlükəsizlik mexanizmi şəbəkə trafiyini yoxlayır və filterləyir?", options: ["Antivirus", "Firewall", "VPN", "Proxy"], answer: 1 },
-            { question: "DNS hansı portda işləyir?", options: ["80", "443", "25", "53"], answer: 3 },
-            { question: "VLAN nəyin qısaltmasıdır?", options: ["Virtual Local Area Network", "Very Large Area Network", "Virtual Leased Area Network", "Volatile Local Area Network"], answer: 0 },
-            { question: "DHCP serverin əsas funksiyası nədir?", options: ["Adları IP-yə çevirmək", "Cihazlara avtomatik IP ünvan vermək", "Faylları saxlamaq", "E-poçt göndərmək"], answer: 1 },
-            { question: "PING əmri nə üçün istifadə olunur?", options: ["Paketlərin yolunu izləmək", "Portların açıq olub-olmadığını yoxlamaq", "İki cihaz arasında əlaqəni yoxlamaq", "DNS adını tapmaq"], answer: 2 },
-            { question: "HTTPS hansı portu istifadə edir?", options: ["80", "21", "110", "443"], answer: 3 },
-            { question: "Private IP ünvan aralıqlarından biri hansıdır?", options: ["1.1.1.1", "8.8.8.8", "172.16.0.0 - 172.31.255.255", "200.200.200.1"], answer: 2 },
-            { question: "Bulud texnologiyalarında 'SaaS' nə deməkdir?", options: ["Security as a Service", "System as a Service", "Software as a Service", "Storage as a Service"], answer: 2 },
-            { question: "Python-da list yaratmaq üçün hansı simvol istifadə olunur?", options: ["()", "{}", "[]", "<>"], answer: 2 },
-            { question: "SQL-də cədvəldən bütün sətirləri seçmək üçün hansı əmr istifadə olunur?", options: ["SELECT * FROM table", "GET * FROM table", "SELECT ALL FROM table", "FETCH * FROM table"], answer: 0 },
-            { question: "Hansı 'phishing' hücumunun tərifidir?", options: ["Sistemə icazəsiz giriş", "İstifadəçiləri aldadaraq həssas məlumatları əldə etmək", "Xidmətdən imtina hücumu", "Zərərli proqramın yayılması"], answer: 1 },
-            { question: "ITIL nə üçün bir çərçivədir?", options: ["Layihə İdarəetməsi", "Proqram Təminatı İnkişafı", "İT Xidmətlərinin İdarə Edilməsi", "Kibertəhlükəsizlik"], answer: 2 }
-        ];
-
-        function generateExams(pool, numExams, questionsPerExam) {
-            const exams = [];
-            for (let i = 0; i < numExams; i++) {
-                const shuffled = [...pool].sort(() => 0.5 - Math.random());
-                exams.push({
-                    title: `Sınaq Testi ${i + 1}`,
-                    questions: shuffled.slice(0, questionsPerExam)
-                });
-            }
-            return exams;
-        }
-
+        // --- BÜTÜN MƏQALƏLƏR ÜÇÜN MƏLUMAT BAZASI ---
         const allContent = {
-            exam: {
-                title: "Sınaq İmtahanları",
-                tests: generateExams(questionPool, 10, 20)
-            },
             labs: {
                 title: "CCNA Laboratoriya İşləri",
                 articles: [
-                    { id: 'lab1', title: "Lab 1: Basic Device Configuration", content: "..." },
-                    { id: 'lab2', title: "Lab 2: Static Routing", content: "..." },
-                    { id: 'lab3', title: "Lab 3: Inter-VLAN Routing", content: "..." },
-                    { id: 'lab4', title: "Lab 4: DHCP Server", content: "..." },
-                    { id: 'lab5', title: "Lab 5: Standard ACL", content: "..." },
-                    { id: 'lab6', title: "Lab 6: NAT Overload (PAT)", content: "..." },
-                    { id: 'lab7', title: "Lab 7: Port Security", content: "..." },
-                    { id: 'lab8', title: "Lab 8: OSPF (Single-Area)", content: "..." },
-                    { id: 'lab9', title: "Lab 9: EtherChannel (LACP)", content: "..." },
-                    { id: 'lab10', title: "Lab 10: SSH Konfiqurasiyası", content: "..." }
+                    { id: 'lab1', title: "Lab 1: Basic Device Configuration", content: "Bu laboratoriya işində Cisco router və switch-lərin əsas konfiqurasiyası addım-addım göstərilir. Hostname, parollar və interfeys IP ünvanlarının təyin edilməsini öyrənəcəksiniz." },
+                    { id: 'lab2', title: "Lab 2: Static Routing", content: "İki fərqli şəbəkə arasında əlaqə yaratmaq üçün statik marşrutların necə konfiqurasiya edildiyini öyrənin. Bu, kiçik şəbəkələr üçün fundamental bir bacarıqdır." },
+                    { id: 'lab3', title: "Lab 3: Inter-VLAN Routing", content: "Router-on-a-stick metodu ilə fərqli VLAN-lar arasında məlumat axınını təmin edin. Bu, şəbəkə seqmentasiyasının vacib bir hissəsidir." },
+                    { id: 'lab4', title: "Lab 4: DHCP Server", content: "Cisco router-i DHCP server kimi konfiqurasiya edərək şəbəkədəki cihazlara avtomatik IP ünvanların paylanmasını təmin edin." },
+                    { id: 'lab5', title: "Lab 5: Standard ACL", content: "Standard Access Control List (ACL) istifadə edərək şəbəkə trafiyini mənbə IP ünvanına görə məhdudlaşdırmağı öyrənin." },
+                    { id: 'lab6', title: "Lab 6: NAT Overload (PAT)", content: "Daxili (private) IP ünvanları bir xarici (public) IP ünvanına çevirərək internetə çıxışı təmin edən Port Address Translation (PAT) konfiqurasiyası." },
+                    { id: 'lab7', title: "Lab 7: Port Security", content: "Switch portlarına icazəsiz cihazların qoşulmasının qarşısını almaq üçün port təhlükəsizliyi funksiyasını aktivləşdirin." },
+                    { id: 'lab8', title: "Lab 8: OSPF (Single-Area)", content: "OSPF (Open Shortest Path First) dinamik marşrutlaşdırma protokolunun tək bir sahədə (single-area) konfiqurasiyası." },
+                    { id: 'lab9', title: "Lab 9: EtherChannel (LACP)", content: "Switch-lər arasında bir neçə fiziki portu birləşdirərək məntiqi bir kanal yaratmaqla ötürmə qabiliyyətini və etibarlılığı artırın." },
+                    { id: 'lab10', title: "Lab 10: SSH Konfiqurasiyası", content: "Cihazlara təhlükəsiz uzaqdan idarəetmə girişi üçün Telnet əvəzinə SSH (Secure Shell) konfiqurasiya edin." }
                 ]
             },
             network: { 
                 title: "Network Dərsləri", 
-                articles: Array.from({length: 10}, (_, i) => ({id: `net${i+1}`, title: `Network Mövzu ${i+1}`, content: `Bu, Network haqqında ${i+1}-ci məqalədir.`}))
+                articles: [
+                    { id: 'net1', title: "OSI Modeli Nədir?", content: "<h4>Giriş</h4><p>OSI (Open Systems Interconnection) modeli, şəbəkə rabitəsinin necə baş verdiyini anlamaq üçün istifadə olunan 7 səviyyəli bir çərçivədir. Hər səviyyə müəyyən bir funksiyanı yerinə yetirir və yuxarıdakı və aşağıdakı səviyyələrlə qarşılıqlı əlaqədə olur.</p><h4>7 Səviyyə</h4><p><b>7. Application (Tətbiq):</b> İstifadəçinin birbaşa qarşılıqlı əlaqədə olduğu səviyyə. Məsələn, veb brauzer (HTTP) və ya e-poçt proqramı (SMTP).<br><b>6. Presentation (Təqdimat):</b> Məlumatın formatını müəyyənləşdirir, şifrələmə və sıxılma kimi funksiyaları yerinə yetirir.<br><b>5. Session (Sessiya):</b> Cihazlar arasında əlaqənin (sessiyanın) qurulmasını, idarə olunmasını və dayandırılmasını təmin edir.<br><b>4. Transport (Nəqliyyat):</b> Məlumatın başdan-başa etibarlı şəkildə ötürülməsini təmin edir. TCP və UDP protokolları burada işləyir.<br><b>3. Network (Şəbəkə):</b> Məlumat paketlərinin fərqli şəbəkələr arasında ən optimal yolla (marşrutlaşdırma) hədəfə çatdırılmasını təmin edir. IP ünvanları bu səviyyədə istifadə olunur.<br><b>2. Data Link (Kanal):</b> Məlumatın eyni şəbəkədəki cihazlar arasında xətasız ötürülməsini təmin edir. MAC ünvanları və switch-lər bu səviyyədə fəaliyyət göstərir.<br><b>1. Physical (Fiziki):</b> Məlumatın bitlər (0 və 1-lər) şəklində kabellər, radio siqnalları kimi fiziki mühitlərdə ötürülməsini təmin edir.</p>" },
+                    { id: 'net2', title: "TCP/IP Modeli", content: "<h4>Giriş</h4><p>TCP/IP modeli, İnternetin əsasını təşkil edən protokollar toplusudur və OSI modelinə daha praktik bir alternativdir. O, adətən 4 səviyyədən ibarətdir.</p><h4>4 Səviyyə</h4><p><b>1. Application (Tətbiq):</b> OSI modelinin Tətbiq, Təqdimat və Sessiya səviyyələrini birləşdirir. HTTP, FTP, SMTP kimi protokolları əhatə edir.<br><b>2. Transport (Nəqliyyat):</b> OSI modelindəki Nəqliyyat səviyyəsinə uyğundur. TCP (etibarlı) və UDP (sürətli, etibarsız) protokolları ilə məlumatın ötürülməsini idarə edir.<br><b>3. Internet (İnternet):</b> OSI modelinin Şəbəkə səviyyəsinə uyğundur. Paketlərin mənbədən hədəfə yönləndirilməsi (marşrutlaşdırılması) üçün IP (Internet Protocol) protokolunu istifadə edir.<br><b>4. Network Access / Link (Şəbəkəyə Giriş):</b> OSI modelinin Kanal və Fiziki səviyyələrini birləşdirir. Məlumatın fiziki şəbəkə üzərindən necə ötürüləcəyini müəyyənləşdirir (məsələn, Ethernet, Wi-Fi).</p>" },
+                    { id: 'net3', title: "IP Ünvanlar və Subnetting", content: "<h4>IP Ünvan Nədir?</h4><p>IP (Internet Protocol) ünvanı, bir kompüter şəbəkəsindəki bir cihaza təyin edilmiş unikal rəqəmsal bir etiketdir. IPv4 (32-bit) və IPv6 (128-bit) olmaqla iki əsas versiyası var.</p><h4>Subnetting Nədir?</h4><p>Subnetting, böyük bir IP şəbəkəsini daha kiçik, idarəolunan alt şəbəkələrə (subnetlərə) bölmək prosesidir. Bu, performansı artırır, təhlükəsizliyi gücləndirir və ünvanların daha səmərəli istifadəsinə imkan verir.<br>Subnet mask, bir IP ünvanının hansı hissəsinin şəbəkəni və hansı hissəsinin hostu (cihazı) təmsil etdiyini müəyyənləşdirir. Məsələn, <b>255.255.255.0</b> subnet maskı ilk üç oktetin şəbəkə, son oktetin isə host üçün olduğunu göstərir.</p><pre><code class='language-bash'># Nümunə: 192.168.1.10 / 255.255.255.0\nNetwork ID: 192.168.1.0\nHost ID: 10\nBroadcast Address: 192.168.1.255</code><button class='copy-code-btn'><i class='fas fa-copy'></i></button></pre>" },
+                    { id: 'net4', title: "Router, Switch, Hub Arasındakı Fərq", content: "<h4>Hub</h4><p>Ən bəsit şəbəkə cihazıdır. Bir portuna gələn məlumatı digər bütün portlarına təkrarlayır (broadcast). Bu, lazımsız trafik yaradır və toqquşmalara (collisions) səbəb olur. Müasir şəbəkələrdə demək olar ki, istifadə edilmir.</p><h4>Switch</h4><p>Hub-dan daha ağıllı bir cihazdır. MAC ünvan cədvəli yaradaraq hansı cihazın hansı porta qoşulduğunu öyrənir. Məlumatı yalnız hədəf cihazın qoşulu olduğu porta göndərir. Bu, şəbəkənin səmərəliliyini artırır və toqquşma domenlərini ayırır.</p><h4>Router</h4><p>Ən ağıllı cihazdır. Fərqli şəbəkələri (məsələn, ev şəbəkənizi İnternetlə) bir-birinə bağlayır. IP ünvanlarına əsaslanaraq məlumat paketlərini şəbəkələr arasında yönləndirir (marşrutlaşdırır). Broadcast domenlərini ayırır və şəbəkə üçün bir çox təhlükəsizlik funksiyasını təmin edir.</p>" },
+                    { id: 'net5', title: "TCP və UDP Protokolları", content: "<h4>TCP (Transmission Control Protocol)</h4><p><b>Etibarlı (Reliable):</b> TCP, göndərilən hər bir məlumat paketinin hədəfə çatıb-çatmadığını yoxlayır. Paket itərsə, yenidən göndərir. Buna 'three-way handshake' (üçtərəfli əlsıxma) ilə nail olur.<br><b>Sıralı (Ordered):</b> Paketlərin düzgün ardıcıllıqla çatdırılmasını təmin edir.<br><b>İstifadə Sahələri:</b> Veb səhifələrin yüklənməsi (HTTP/HTTPS), fayl transferi (FTP), e-poçt (SMTP) kimi məlumatın itkisiz və tam ötürülməsinin vacib olduğu yerlərdə istifadə olunur.</p><h4>UDP (User Datagram Protocol)</h4><p><b>Etibarsız (Unreliable):</b> UDP, paketlərin çatıb-çatmadığını yoxlamır. İtən paketlər yenidən göndərilmir.<br><b>Sırasız (Unordered):</b> Paketlərin ardıcıllığına zəmanət vermir.<br><b>Sürətli:</b> Etibarlılıq yoxlamaları olmadığı üçün TCP-dən daha sürətlidir.<br><b>İstifadə Sahələri:</b> Onlayn oyunlar, video və səs axını (streaming), DNS sorğuları kimi sürətin etibarlılıqdan daha vacib olduğu tətbiqlərdə istifadə olunur.</p>" },
+                    { id: 'net6', title: "DNS Nədir və Necə İşləyir?", content: "Bu, DNS haqqında məqalədir." },
+                    { id: 'net7', title: "DHCP Protokolu", content: "Bu, DHCP haqqında məqalədir." },
+                    { id: 'net8', title: "NAT və PAT Texnologiyaları", content: "Bu, NAT və PAT haqqında məqalədir." },
+                    { id: 'net9', title: "VLAN Konsepti", content: "Bu, VLAN haqqında məqalədir." },
+                    { id: 'net10', title: "Firewall Növləri", content: "Bu, Firewall haqqında məqalədir." }
+                ]
             },
             system: { 
                 title: "System Engineering", 
@@ -596,7 +592,6 @@
         }
 
         function handleLogout() {
-            // Log Out düyməsi artıq "Məni xatırla" seçimlərini silir.
             localStorage.removeItem('rememberedUser');
             localStorage.removeItem('rememberedCourseUser');
             appContainer.classList.add('hidden');
@@ -643,6 +638,7 @@
 
         function showCourseLinktreePage() {
             pageTitle.textContent = "Dərs Vəsaitləri";
+            contentArea.className = "p-4 md:p-6"; // Reset content area class
             let linksHTML = `<div class="max-w-4xl mx-auto space-y-4">
                                 <div class="text-right mb-4">
                                     <button id="reset-progress-btn" class="text-sm font-semibold py-2 px-4 rounded-lg">
@@ -711,6 +707,7 @@
 
         function showHomePage() {
             pageTitle.textContent = "Ana Səhifə";
+            contentArea.className = "p-0 md:p-0"; // Reset content area class
             contentArea.innerHTML = `<iframe src="https://cavadmikayil.com" class="w-full h-full border-0 rounded-lg shadow-inner bg-white" title="cavadmikayil.com" onerror="this.outerHTML='<div class=\\'bg-red-100 border border-red-400 text-red-700 px-4 py-3 rounded-lg relative\\'><strong>Xəta:</strong> cavadmikayil.com saytını yükləmək mümkün olmadı.</div>'"></iframe>`;
             setActiveLink(document.getElementById('home-link'));
             if(window.innerWidth < 768 && !sidebar.classList.contains('-translate-x-full')) {
@@ -721,6 +718,7 @@
         function showArticleListPage(categoryKey) {
             const category = allContent[categoryKey];
             pageTitle.textContent = category.title;
+            contentArea.className = "p-4 md:p-6"; // Reset content area class
             let listHTML = '<div class="space-y-4">';
             category.articles.forEach(article => {
                 listHTML += `<div class="bg-white dark:bg-zinc-800 p-5 rounded-lg clickable-list-item flex justify-between items-center" data-category="${categoryKey}" data-article-id="${article.id}"><span class="font-semibold text-gray-800 dark:text-gray-200">${article.title}</span><i class="fas fa-chevron-right text-gray-400"></i></div>`;
@@ -736,89 +734,10 @@
             const category = allContent[categoryKey];
             const article = category.articles.find(a => a.id === articleId);
             pageTitle.textContent = article.title;
+            contentArea.className = "p-4 md:p-6"; // Reset content area class
             const articleHTML = `<div class="space-y-6"><button class="text-white font-bold py-2 px-4 rounded-lg inline-flex items-center" id="back-to-list-btn" data-category="${categoryKey}"><i class="fas fa-arrow-left mr-2"></i>Geri</button><div class="p-6 md:p-8 rounded-lg article-card"><h3 class="text-2xl md:text-3xl font-bold mb-4">${article.title}</h3><div class="article-content text-base md:text-lg">${article.content}</div></div></div>`;
             contentArea.innerHTML = articleHTML;
             contentArea.scrollTop = 0;
-        }
-
-        function showExamListPage() {
-            const examData = allContent.exam;
-            pageTitle.textContent = examData.title;
-            let listHTML = '<div class="space-y-4">';
-            const savedResults = JSON.parse(localStorage.getItem('examResults')) || {};
-            examData.tests.forEach((test, index) => {
-                const result = savedResults[index];
-                const scoreHTML = result ? `<span class="font-bold text-amber-600">${result.score}/${result.total}</span>` : '';
-                listHTML += `<div class="bg-white dark:bg-zinc-800 p-5 rounded-lg clickable-list-item flex justify-between items-center" data-test-id="${index}"><span class="font-semibold text-gray-800 dark:text-gray-200">${test.title}</span>${scoreHTML}</div>`;
-            });
-            listHTML += '</div>';
-            contentArea.innerHTML = listHTML;
-            contentArea.scrollTop = 0;
-            setActiveLink(document.getElementById('exam-link'));
-            if(window.innerWidth < 768) toggleMenu();
-        }
-
-        function showSingleExamPage(testIndex) {
-            const test = allContent.exam.tests[testIndex];
-            pageTitle.textContent = test.title;
-            let examHTML = `<div class="space-y-6">
-                                <button class="text-white font-bold py-2 px-4 rounded-lg inline-flex items-center" id="back-to-exam-list-btn">
-                                    <i class="fas fa-arrow-left mr-2"></i>İmtahan Siyahısına Geri
-                                </button>
-                                <div id="quiz-container" class="space-y-6">`;
-            test.questions.forEach((q, index) => {
-                examHTML += `
-                    <div id="question-${index}" class="bg-white dark:bg-zinc-800 p-5 rounded-lg shadow-md border-l-4 border-gray-200 dark:border-zinc-700 transition-colors duration-300">
-                        <p class="font-semibold text-lg mb-4">${index + 1}. ${q.question}</p>
-                        <div class="space-y-2">`;
-                q.options.forEach((option, optionIndex) => {
-                    examHTML += `
-                        <label class="flex items-center p-3 rounded-lg hover:bg-gray-100 dark:hover:bg-zinc-700 cursor-pointer">
-                            <input type="radio" name="question${index}" value="${optionIndex}" class="mr-3 h-4 w-4 text-amber-600 focus:ring-amber-500 border-gray-300 dark:border-zinc-600 dark:bg-zinc-700">
-                            <span>${option}</span>
-                        </label>`;
-                });
-                examHTML += `</div><p id="feedback-${index}" class="mt-3 text-sm font-medium"></p></div>`;
-            });
-            examHTML += `<div class="flex justify-between items-center mt-6">
-                            <button id="check-exam-btn" data-test-id="${testIndex}" class="font-bold py-2 px-6 rounded-lg">Yoxla</button>
-                            <p id="exam-result" class="font-bold text-xl"></p>
-                         </div></div></div>`;
-            contentArea.innerHTML = examHTML;
-            contentArea.scrollTop = 0;
-        }
-
-        function checkExamAnswers(testIndex) {
-            const test = allContent.exam.tests[testIndex];
-            let score = 0;
-            test.questions.forEach((q, index) => {
-                const questionContainer = document.getElementById(`question-${index}`);
-                const feedbackEl = document.getElementById(`feedback-${index}`);
-                const selectedOption = document.querySelector(`input[name="question${index}"]:checked`);
-                
-                questionContainer.classList.remove('question-correct', 'question-incorrect', 'question-unanswered');
-
-                if (selectedOption) {
-                    if (parseInt(selectedOption.value) === q.answer) {
-                        score++;
-                        questionContainer.classList.add('question-correct');
-                        feedbackEl.innerHTML = '';
-                    } else {
-                        questionContainer.classList.add('question-incorrect');
-                        feedbackEl.innerHTML = `Doğru cavab: <span class="correct-answer-text">${q.options[q.answer]}</span>`;
-                    }
-                } else {
-                    questionContainer.classList.add('question-unanswered');
-                    feedbackEl.innerHTML = `Cavab seçilməyib. Doğru cavab: <span class="correct-answer-text">${q.options[q.answer]}</span>`;
-                }
-            });
-            const resultEl = document.getElementById('exam-result');
-            resultEl.textContent = `Nəticə: ${test.questions.length} sualdan ${score} doğru.`;
-            
-            // Nəticəni yadda saxla
-            const savedResults = JSON.parse(localStorage.getItem('examResults')) || {};
-            savedResults[testIndex] = { score: score, total: test.questions.length };
-            localStorage.setItem('examResults', JSON.stringify(savedResults));
         }
 
         function handleSearch(e) {
@@ -843,6 +762,7 @@
         function showSearchResultsPage(results, searchTerm) {
             pageTitle.textContent = `'${searchTerm}' üçün Axtarış Nəticələri`;
             setActiveLink(null);
+            contentArea.className = "p-4 md:p-6"; // Reset content area class
             let resultsHTML = `<div class="space-y-4">`;
             if (results.length > 0) {
                 results.forEach(result => {
@@ -860,10 +780,657 @@
             contentArea.innerHTML = resultsHTML;
         }
 
+        // --- YENİ İMTAHAN MODULUNU YÜKLƏMƏ FUNKSİYASI ---
+        function loadNewExamModule() {
+            pageTitle.textContent = "İmtahan Portalı";
+            contentArea.className = "gradient-bg min-h-full flex items-center justify-center p-4"; // Set new class
+            
+            const examHTML = `
+                <div class="container mx-auto max-w-5xl">
+
+                    <!-- Student Login Page -->
+                    <div id="exam-login-page" class="page bg-gray-800/80 backdrop-blur-sm rounded-2xl shadow-2xl p-8 md:p-12 text-center">
+                        <h1 class="text-3xl md:text-4xl font-bold text-white mb-2">İmtahan Portalına Xoş Gəlmisiniz</h1>
+                        <p class="text-gray-400 mb-8">Zəhmət olmasa, başlamaq üçün adınızı daxil edin.</p>
+                        <div class="max-w-sm mx-auto">
+                            <div class="input-with-icon mb-4">
+                                <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"></path><circle cx="12" cy="7" r="4"></circle></svg>
+                                <input type="text" id="student-name" class="w-full px-4 py-3 bg-gray-700 border border-gray-600 text-white rounded-lg focus:outline-none focus:ring-2 focus:ring-yellow-500" placeholder="Adınız və Soyadınız">
+                            </div>
+                            <button id="exam-login-btn" class="w-full bg-yellow-500 text-black font-bold py-3 px-6 rounded-lg hover:bg-yellow-600 transition-all duration-300 shadow-lg hover:shadow-yellow-500/30 transform hover:scale-105">
+                                Daxil Ol
+                            </button>
+                        </div>
+                        <div class="mt-8">
+                            <button id="show-teacher-login-btn" class="text-sm text-gray-300 bg-gray-700 hover:bg-gray-600 font-semibold py-2 px-4 rounded-lg transition-colors">Müəllim Girişi</button>
+                        </div>
+                    </div>
+                    
+                    <!-- Teacher Login Page -->
+                    <div id="teacher-login-page" class="hidden page bg-gray-800/80 backdrop-blur-sm rounded-2xl shadow-2xl p-8 md:p-12 text-center">
+                        <h1 class="text-3xl md:text-4xl font-bold text-white mb-2">Müəllim Girişi</h1>
+                        <p class="text-gray-400 mb-8">Panelə daxil olmaq üçün məlumatları daxil edin.</p>
+                        <div class="max-w-sm mx-auto">
+                            <div class="input-with-icon mb-4">
+                                <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"></path><circle cx="12" cy="7" r="4"></circle></svg>
+                                <input type="text" id="teacher-username" class="w-full px-4 py-3 bg-gray-700 border border-gray-600 text-white rounded-lg focus:outline-none focus:ring-2 focus:ring-yellow-500" placeholder="İstifadəçi adı">
+                            </div>
+                            <div class="input-with-icon">
+                                <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="11" width="18" height="11" rx="2" ry="2"></rect><path d="M7 11V7a5 5 0 0 1 10 0v4"></path></svg>
+                                <input type="password" id="teacher-password" class="w-full px-4 py-3 bg-gray-700 border border-gray-600 text-white rounded-lg focus:outline-none focus:ring-2 focus:ring-yellow-500" placeholder="Şifrə">
+                            </div>
+                            <p id="teacher-login-error" class="text-red-500 text-sm mt-2 hidden">İstifadəçi adı və ya şifrə yanlışdır.</p>
+                            <button id="teacher-login-btn" class="w-full mt-4 bg-yellow-500 text-black font-bold py-3 px-6 rounded-lg hover:bg-yellow-600 transition-all duration-300 shadow-lg hover:shadow-yellow-500/30 transform hover:scale-105">
+                                Daxil Ol
+                            </button>
+                        </div>
+                        <div class="mt-8">
+                            <button id="back-to-student-login-btn" class="text-sm text-gray-300 bg-gray-700 hover:bg-gray-600 font-semibold py-2 px-4 rounded-lg transition-colors">Tələbə Girişinə Qayıt</button>
+                        </div>
+                    </div>
+
+                    <!-- Main Menu Page -->
+                    <div id="main-menu-page" class="hidden page">
+                        <div class="bg-gray-800/80 backdrop-blur-sm rounded-2xl shadow-2xl p-8 md:p-12">
+                            <div class="flex justify-between items-start mb-8">
+                                <div>
+                                    <h1 class="text-2xl md:text-3xl font-bold text-white mb-2">Salam, <span id="user-name-display"></span>!</h1>
+                                    <p class="text-gray-400">İmtahan vermək istədiyiniz sahəni seçin.</p>
+                                </div>
+                                <button id="exam-logout-btn" class="bg-red-600 text-white font-semibold py-2 px-4 rounded-lg hover:bg-red-700 transition-colors shadow-md flex-shrink-0">
+                                    Çıxış Et
+                                </button>
+                            </div>
+                            <div id="category-container" class="grid md:grid-cols-3 gap-8"></div>
+                        </div>
+                    </div>
+                    
+                    <!-- Question Bank Page -->
+                    <div id="bank-page" class="hidden page">
+                        <div class="bg-gray-800/80 backdrop-blur-sm rounded-2xl shadow-2xl p-8 md:p-12">
+                            <button id="back-to-main-menu-btn" class="mb-6 bg-gray-700 text-gray-300 font-semibold py-2 px-4 rounded-lg hover:bg-gray-600 transition-colors">
+                                &larr; Geri
+                            </button>
+                            <h1 id="bank-page-title" class="text-2xl md:text-3xl font-bold text-white mb-2">Sual Bankları</h1>
+                            <p class="text-gray-400 mb-8">Başlamaq üçün bir sual bankı seçin.</p>
+                            <div id="bank-container" class="grid sm:grid-cols-2 lg:grid-cols-3 gap-4"></div>
+                        </div>
+                    </div>
+
+                    <!-- Exam Page -->
+                    <div id="exam-page" class="hidden page">
+                        <div class="bg-gray-800/80 backdrop-blur-sm rounded-2xl shadow-2xl p-8 md:p-12 text-gray-200">
+                            <div class="flex justify-between items-center mb-6">
+                                <h1 id="exam-title" class="text-xl md:text-2xl font-bold text-white">İmtahan</h1>
+                                <div id="timer" class="text-lg font-semibold bg-red-500/20 text-red-300 px-4 py-2 rounded-lg">20:00</div>
+                            </div>
+                            <div id="questions-container" class="space-y-8"></div>
+                            <button id="submit-exam-btn" class="w-full mt-8 bg-yellow-500 text-black font-bold py-3 px-6 rounded-lg hover:bg-yellow-600 transition-colors duration-300 shadow-lg">
+                                İmtahanı Təsdiqlə
+                            </button>
+                        </div>
+                    </div>
+
+                    <!-- Report Page -->
+                    <div id="report-page" class="hidden page">
+                        <div class="bg-gray-800/80 backdrop-blur-sm rounded-2xl shadow-2xl p-8 md:p-12">
+                            <h1 class="text-3xl md:text-4xl font-bold text-center text-white mb-6">İmtahan Nəticəsi</h1>
+                            <div class="text-center mb-8">
+                                <div id="score-chart" class="w-32 h-32 mx-auto"></div>
+                                <p id="score-text" class="text-2xl font-bold text-gray-200 mt-4"></p>
+                                <p id="final-score-percentage" class="text-lg text-gray-400"></p>
+                            </div>
+                            <div class="grid md:grid-cols-2 gap-8 mb-8">
+                                <div class="bg-green-500/10 p-6 rounded-lg">
+                                    <h2 class="text-xl font-bold text-green-400 mb-4">Düzgün Cavablar (<span id="correct-count"></span>)</h2>
+                                    <ul id="correct-answers-list" class="space-y-2 text-sm max-h-48 overflow-y-auto text-gray-300"></ul>
+                                </div>
+                                <div class="bg-red-500/10 p-6 rounded-lg">
+                                    <h2 class="text-xl font-bold text-red-400 mb-4">Səhv Cavablar (<span id="incorrect-count"></span>)</h2>
+                                    <ul id="incorrect-answers-list" class="space-y-2 text-sm max-h-48 overflow-y-auto text-gray-300"></ul>
+                                </div>
+                            </div>
+                            <div class="bg-yellow-500/10 p-6 rounded-lg mb-8">
+                                <h2 class="text-xl font-bold text-yellow-400 mb-4">Yenidən Təkrar Edilməli Mövzular</h2>
+                                <div id="review-topics-list" class="flex flex-wrap gap-2"></div>
+                            </div>
+                            <div class="flex flex-col md:flex-row gap-4 justify-center">
+                                <button id="restart-portal-btn" class="w-full md:w-auto bg-gray-600 text-white font-bold py-3 px-8 rounded-lg hover:bg-gray-500 transition-colors">
+                                    Ana Səhifə
+                                </button>
+                                <button id="send-to-teacher-btn" class="w-full md:w-auto bg-yellow-500 text-black font-bold py-3 px-8 rounded-lg hover:bg-yellow-600 transition-colors">
+                                    Müəllimə Göndər
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <!-- Teacher Panel / Log Page -->
+                    <div id="teacher-panel-page" class="hidden page">
+                        <div class="bg-gray-800/80 backdrop-blur-sm rounded-2xl shadow-2xl p-8 md:p-12">
+                            <div class="flex justify-between items-center mb-6">
+                                <h1 class="text-2xl md:text-3xl font-bold text-white">Müəllim Paneli - Nəticələr</h1>
+                                <button id="teacher-logout-btn" class="bg-red-600 text-white font-semibold py-2 px-4 rounded-lg hover:bg-red-700">
+                                    Çıxış Et
+                                </button>
+                            </div>
+                            <div class="overflow-x-auto rounded-lg">
+                                <table class="min-w-full bg-gray-900">
+                                    <thead class="bg-yellow-500 text-black">
+                                        <tr>
+                                            <th class="text-left py-3 px-4 uppercase font-semibold text-sm">Tələbə</th>
+                                            <th class="text-left py-3 px-4 uppercase font-semibold text-sm">İmtahan</th>
+                                            <th class="text-left py-3 px-4 uppercase font-semibold text-sm">Faiz</th>
+                                            <th class="text-left py-3 px-4 uppercase font-semibold text-sm">Tarix</th>
+                                            <th class="text-center py-3 px-4 uppercase font-semibold text-sm">Ətraflı</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody id="results-table-body" class="text-gray-300"></tbody>
+                                </table>
+                            </div>
+                            <div id="no-results-message" class="text-center py-8 text-gray-400 hidden">
+                                Hələ heç bir nəticə yoxdur.
+                            </div>
+                            <div class="text-right mt-6">
+                                <button id="clear-results-btn" class="bg-red-600 text-white font-bold py-2 px-4 rounded-lg hover:bg-red-700">
+                                    Bütün Nəticələri Sil
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <!-- Modal for "Send to Teacher" -->
+                    <div id="modal" class="hidden fixed inset-0 bg-black bg-opacity-70 flex items-center justify-center z-50 p-4">
+                        <div class="bg-gray-800 p-8 rounded-lg shadow-xl text-center max-w-sm w-full page border border-yellow-500">
+                            <h2 id="modal-title" class="text-2xl font-bold mb-4 text-white">Nəticə Qeydə Alındı!</h2>
+                            <p id="modal-text" class="text-gray-300">Nəticəniz müəllim panelində uğurla yadda saxlanıldı.</p>
+                            <button id="modal-close-btn" class="mt-6 bg-yellow-500 text-black font-bold px-6 py-2 rounded-lg">Bağla</button>
+                        </div>
+                    </div>
+
+                    <!-- Modal for Detailed Results -->
+                    <div id="details-modal" class="hidden fixed inset-0 bg-black bg-opacity-70 flex items-center justify-center z-50 p-4">
+                        <div class="bg-gray-800 rounded-lg shadow-xl max-w-2xl w-full max-h-[90vh] page border border-yellow-500/50">
+                            <div class="p-6 border-b border-gray-700 flex justify-between items-center">
+                                <h2 id="details-modal-title" class="text-2xl font-bold text-white">İmtahan Detalları</h2>
+                                <button id="details-modal-close-btn" class="text-gray-500 hover:text-gray-200 text-3xl">&times;</button>
+                            </div>
+                            <div id="details-modal-content" class="p-6 overflow-y-auto max-h-[calc(90vh-140px)]"></div>
+                            <div class="p-4 bg-gray-900/50 text-right rounded-b-lg">
+                                <button id="details-modal-close-btn-2" class="bg-gray-600 text-white px-6 py-2 rounded-lg hover:bg-gray-500">Bağla</button>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <!-- Custom Confirm Modal -->
+                    <div id="confirm-modal" class="hidden fixed inset-0 bg-black bg-opacity-70 flex items-center justify-center z-50 p-4">
+                        <div class="bg-gray-800 p-8 rounded-lg shadow-xl text-center max-w-sm w-full page border border-yellow-500">
+                            <h2 id="confirm-modal-title" class="text-2xl font-bold mb-4 text-white">Təsdiq</h2>
+                            <p id="confirm-modal-text" class="text-gray-300">Bu əməliyyatı yerinə yetirmək istədiyinizə əminsiniz?</p>
+                            <div class="mt-6 flex justify-center gap-4">
+                                <button id="confirm-modal-yes" class="bg-red-600 text-white font-bold px-6 py-2 rounded-lg hover:bg-red-700">Bəli</button>
+                                <button id="confirm-modal-no" class="bg-gray-600 text-white font-bold px-6 py-2 rounded-lg hover:bg-gray-500">Xeyr</button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            `;
+
+            const examJSScript = document.createElement('script');
+            examJSScript.innerHTML = `
+                (function() {
+                    // --- DATA BANK ---
+                    const examData = {
+                        networkAdmin: {
+                            name: "Şəbəkə İnzibatçılığı",
+                            icon: '<svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="w-12 h-12 mx-auto mb-4 text-yellow-400"><path d="M12 22c5.523 0 10-4.477 10-10S17.523 2 12 2 2 6.477 2 12s4.477 10 10 10z"></path><path d="M2 12h20"></path><path d="M12 2a15.3 15.3 0 0 1 4 10 15.3 15.3 0 0 1-4 10 15.3 15.3 0 0 1-4-10 15.3 15.3 0 0 1 4-10z"></path></svg>',
+                            banks: Array.from({ length: 10 }, (_, i) => ({
+                                name: \`Bank \${i + 1}\`,
+                                questions: [
+                                    { q: "OSI modelinin 3-cü qatı hansıdır?", options: ["Fiziki", "Şəbəkə", "Nəqliyyat", "Tətbiqi"], answer: "B", topic: "OSI Modeli" },
+                                    { q: "IP ünvanı hansı qatda işləyir?", options: ["Data Link", "Fiziki", "Şəbəkə", "Sessiya"], answer: "C", topic: "TCP/IP" },
+                                    { q: "192.168.1.1 hansı sinif IP ünvanıdır?", options: ["A", "B", "C", "D"], answer: "C", topic: "IP Ünvanlama" },
+                                    { q: "MAC ünvanı neçə bitdən ibarətdir?", options: ["32", "48", "64", "128"], answer: "B", topic: "MAC Ünvanları" },
+                                    { q: "Hansı protokol fayl transferi üçün istifadə olunur?", options: ["HTTP", "SMTP", "FTP", "DNS"], answer: "C", topic: "Protokollar" },
+                                    { q: "Subnet mask 255.255.255.0 nə deməkdir?", options: ["/8", "/16", "/24", "/32"], answer: "C", topic: "Subnetting" },
+                                    { q: "Router hansı cihazları birləşdirir?", options: ["Eyni şəbəkələri", "Fərqli şəbəkələri", "Sadəcə kompüterləri", "Sadəcə switchləri"], answer: "B", topic: "Şəbəkə Cihazları" },
+                                    { q: "DNS nə üçün istifadə olunur?", options: ["Domen adlarını IP-yə çevirmək", "Fayl göndərmək", "E-poçt göndərmək", "Təhlükəsizlik"], answer: "A", topic: "DNS" },
+                                    { q: "Hansı kabel növü daha sürətlidir?", options: ["Coaxial", "Twisted Pair", "Fiber Optik", "Hamısı eynidir"], answer: "C", topic: "Kabel Növləri" },
+                                    { q: "VLAN nədir?", options: ["Virtual Lokal Şəbəkə", "Geniş Ərazi Şəbəkəsi", "Real Lokal Şəbəkə", "Təhlükəsiz Şəbəkə"], answer: "A", topic: "VLAN" },
+                                    { q: "Ping əmri nəyi yoxlayır?", options: ["Sürəti", "Qoşulma vəziyyətini", "Təhlükəsizliyi", "Portları"], answer: "B", topic: "Şəbəkə Diaqnostikası" },
+                                    { q: "DHCP serverin rolu nədir?", options: ["IP ünvanları paylamaq", "Adları həll etmək", "Veb saytları host etmək", "Trafiki idarə etmək"], answer: "A", topic: "DHCP" },
+                                    { q: "Firewall nəyi qoruyur?", options: ["Viruslardan", "İcazəsiz girişlərdən", "Fiziki zədələrdən", "Elektrik kəsintilərindən"], answer: "B", topic: "Şəbəkə Təhlükəsizliyi" },
+                                    { q: "Hub və Switch arasındakı əsas fərq nədir?", options: ["Sürət", "Port sayı", "Trafiki ağıllı idarə etmə", "Qiymət"], answer: "C", topic: "Şəbəkə Cihazları" },
+                                    { q: "VPN nə üçün istifadə olunur?", options: ["Şəbəkəni sürətləndirmək", "Təhlükəsiz uzaqdan qoşulma", "Oyun oynamaq", "Fayl saxlamaq"], answer: "B", topic: "VPN" },
+                                    { q: "NAT nə deməkdir?", options: ["Network Address Translation", "Network Access Time", "New Address Technology", "Network Administration Tool"], answer: "A", topic: "NAT" },
+                                    { q: "PoE nəyi təmin edir?", options: ["Yüksək sürət", "Geniş əhatə dairəsi", "Şəbəkə kabeli üzərindən enerji", "Simsiz qoşulma"], answer: "C", topic: "Texnologiyalar" },
+                                    { q: "AP (Access Point) nə edir?", options: ["Simli şəbəkəni simsizə çevirir", "Routeri əvəz edir", "İnternet sürətini artırır", "Virusları bloklayır"], answer: "A", topic: "Simsiz Şəbəkələr" },
+                                    { q: "Hansı topologiyada bütün cihazlar bir mərkəzi nöqtəyə qoşulur?", options: ["Ring", "Bus", "Star", "Mesh"], answer: "C", topic: "Şəbəkə Topologiyaları" },
+                                    { q: "ICMP hansı protokoldur?", options: ["İnternet Nəzarət Mesaj Protokolu", "İnternet Qoşulma Protokolu", "İnternet İdarəetmə Protokolu", "İnternet Kommunikasiya Protokolu"], answer: "A", topic: "Protokollar" }
+                                ]
+                            }))
+                        },
+                        systemAdmin: {
+                            name: "Sistem Administratorluğu",
+                            icon: '<svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="w-12 h-12 mx-auto mb-4 text-yellow-400"><rect x="3" y="3" width="18" height="18" rx="2" ry="2"></rect><line x1="3" y1="9" x2="21" y2="9"></line><line x1="9" y1="21" x2="9" y2="9"></line></svg>',
+                            banks: Array.from({ length: 10 }, (_, i) => ({
+                                name: \`Bank \${i + 1}\`,
+                                questions: [
+                                    { q: "Linux-da faylları siyahılamaq üçün hansı əmr istifadə olunur?", options: ["dir", "list", "ls", "show"], answer: "C", topic: "Linux Əmrləri" },
+                                    { q: "Active Directory hansı şirkətin məhsuludur?", options: ["Apple", "Microsoft", "Google", "IBM"], answer: "B", topic: "Active Directory" },
+                                    { q: "Hansı virtualizasiya platforması deyil?", options: ["VMware", "Hyper-V", "VirtualBox", "Docker"], answer: "D", topic: "Virtualizasiya" },
+                                    { q: "RAID 1 nəyi təmin edir?", options: ["Sürət (Striping)", "Güzgüləmə (Mirroring)", "Hər ikisini", "Heç birini"], answer: "B", topic: "RAID" },
+                                    { q: "Serverlərin backup-ı nə üçün vacibdir?", options: ["Sürəti artırmaq", "Məlumat itkisinin qarşısını almaq", "Lisenziya tələbi", "Görünüş üçün"], answer: "B", topic: "Backup və Bərpa" },
+                                    { q: "Hansı fayl sistemi Windows-da standartdır?", options: ["ext4", "APFS", "NTFS", "HFS+"], answer: "C", topic: "Fayl Sistemləri" },
+                                    { q: "Powershell nədir?", options: ["Linux terminalı", "Windows üçün komanda mühiti", "Mac terminalı", "Bir proqramlaşdırma dili"], answer: "B", topic: "Windows Server" },
+                                    { q: "Sudo əmri nə üçün istifadə olunur?", options: ["Fayl silmək", "İstifadəçi dəyişmək", "Prosesi dayandırmaq", "İnzibatçı hüquqları ilə əmr icra etmək"], answer: "D", topic: "Linux İdarəetmə" },
+                                    { q: "Hansı port veb serverlər üçün standartdır (HTTP)?", options: ["21", "25", "80", "443"], answer: "C", topic: "Server Portları" },
+                                    { q: "GPO nə deməkdir?", options: ["Group Policy Object", "General Purpose Object", "Global Policy Option", "Group Permission Object"], answer: "A", topic: "Active Directory" },
+                                ]
+                            }))
+                        },
+                        itHelpdesk: {
+                            name: "IT Helpdesk",
+                            icon: '<svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="w-12 h-12 mx-auto mb-4 text-yellow-400"><path d="M18 2h-3a4 4 0 0 0-4 4v5a4 4 0 0 0 4 4h3v-2h-3a2 2 0 0 1-2-2V6a2 2 0 0 1 2-2h3Z"></path><path d="M21 14h-3a2 2 0 0 1-2-2V6"></path><path d="M3 12a9 9 0 1 0 9-9"></path></svg>',
+                            banks: Array.from({ length: 10 }, (_, i) => ({
+                                name: \`Bank \${i + 1}\`,
+                                questions: [
+                                    { q: "İstifadəçi internetə qoşula bilmirsə, ilk nəyi yoxlamalısınız?", options: ["IP ünvanını", "Kabelin qoşulu olub-olmadığını", "Brauzeri yeniləməyi", "Antivirusu söndürməyi"], answer: "B", topic: "Problemlərin Diaqnostikası" },
+                                    { q: "Printer çap etmirsə, hansı addım yanlışdır?", options: ["Printerin qoşulu olduğunu yoxlamaq", "Kağız olub-olmadığını yoxlamaq", "Dərhal yeni drayver yükləmək", "Çap növbəsini yoxlamaq"], answer: "C", topic: "Printer Nasazlıqları" },
+                                    { q: "“Mavi ekran” (BSOD) nəyin göstəricisidir?", options: ["Monitor problemi", "Ciddi sistem və ya hardware xətası", "Virus", "İnternet kəsintisi"], answer: "B", topic: "Hardware Problemləri" },
+                                    { q: "Hansı proqram uzaqdan dəstək üçün istifadə olunur?", options: ["Word", "Excel", "AnyDesk", "Photoshop"], answer: "C", topic: "Uzaqdan Dəstək" },
+                                    { q: "İstifadəçi parolunu unudubsa nə etməli?", options: ["Yeni kompüter verməli", "Parolu sıfırlamaq üçün prosedur izləməli", "Hesabını silməli", "Gözləməsini söyləməli"], answer: "B", topic: "İstifadəçi İdarəetməsi" },
+                                    { q: "Phishing nədir?", options: ["Bir növ virus", "Məlumat oğurlamaq üçün saxta veb sayt/e-poçt", "Şəbəkə hücumu", "Reklam proqramı"], answer: "B", topic: "Təhlükəsizlik Məlumatlılığı" },
+                                    { q: "Kompüter yavaş işləyirsə, ilk nə edilməlidir?", options: ["Format etmək", "Task Manager-i yoxlamaq", "Yeni RAM almaq", "Kompüteri dəyişmək"], answer: "B", topic: "Performans Problemləri" },
+                                    { q: "Hansı fayl uzantısı potensial təhlükəli ola bilər?", options: [".txt", ".jpg", ".exe", ".pdf"], answer: "C", topic: "Zərərli Proqramlar" },
+                                    { q: "Ticket sistemi nə üçün istifadə olunur?", options: ["İstifadəçi müraciətlərini qeydə almaq və izləmək", "Maaş hesablamaq", "İcazələri idarə etmək", "Faylları saxlamaq"], answer: "A", topic: "Helpdesk Prosedurları" },
+                                    { q: "E-poçt göndərilə bilmirsə, nəyi yoxlamaq lazımdır?", options: ["İnternet bağlantısını", "SMTP server ayarlarını", "Gələnlər qutusunu", "Hər ikisi (A və B)"], answer: "D", topic: "E-poçt Problemləri" },
+                                ]
+                            }))
+                        }
+                    };
+
+                    let currentUser = "";
+                    let currentCategoryKey = "";
+                    let currentBankIndex = -1;
+                    let userAnswers = {};
+                    let timerInterval;
+                    let chart;
+                    const RESULTS_STORAGE_KEY = 'examResultsLog';
+
+                    function showPage(pageId) {
+                        ['exam-login-page', 'main-menu-page', 'bank-page', 'exam-page', 'report-page', 'teacher-panel-page', 'teacher-login-page'].forEach(id => {
+                            const el = document.getElementById(id);
+                            if (el) el.classList.add('hidden');
+                        });
+                        const page = document.getElementById(pageId);
+                        if (page) {
+                            page.classList.remove('hidden');
+                            page.classList.add('page');
+                        }
+                    }
+
+                    function login() {
+                        const studentName = document.getElementById('student-name').value.trim();
+                        if (studentName) {
+                            currentUser = studentName;
+                            document.getElementById('user-name-display').textContent = currentUser;
+                            displayCategories();
+                            showPage('main-menu-page');
+                        } else {
+                            alert("Zəhmət olmasa, adınızı daxil edin.");
+                        }
+                    }
+
+                    function logout() {
+                        currentUser = ""; 
+                        document.getElementById('student-name').value = ''; 
+                        showPage('exam-login-page'); 
+                    }
+                    
+                    function loginTeacher() {
+                        const username = document.getElementById('teacher-username').value;
+                        const password = document.getElementById('teacher-password').value;
+                        const errorMsg = document.getElementById('teacher-login-error');
+
+                        if (username === 'cavadmikayil' && password === '1923') {
+                            errorMsg.classList.add('hidden');
+                            document.getElementById('teacher-username').value = '';
+                            document.getElementById('teacher-password').value = '';
+                            showTeacherPanel();
+                        } else {
+                            errorMsg.classList.remove('hidden');
+                        }
+                    }
+
+                    function logoutTeacher() {
+                        showPage('teacher-login-page');
+                    }
+
+                    function displayCategories() {
+                        const container = document.getElementById('category-container');
+                        container.innerHTML = '';
+                        for (const key in examData) {
+                            const category = examData[key];
+                            const card = \`
+                                <div class="bg-gray-800/80 p-6 rounded-xl card-hover cursor-pointer border border-gray-700" onclick="examModule.displayQuestionBanks('\${key}')">
+                                    \${category.icon}
+                                    <h3 class="text-xl font-bold text-center text-white">\${category.name}</h3>
+                                </div>
+                            \`;
+                            container.innerHTML += card;
+                        }
+                    }
+                    
+                    function displayQuestionBanks(categoryKey) {
+                        currentCategoryKey = categoryKey;
+                        const category = examData[categoryKey];
+                        document.getElementById('bank-page-title').textContent = \`\${category.name} - Sual Bankları\`;
+                        const container = document.getElementById('bank-container');
+                        container.innerHTML = '';
+                        category.banks.forEach((bank, index) => {
+                            const button = \`
+                                <button onclick="examModule.startExam('\${categoryKey}', \${index})" class="w-full text-left p-4 bg-gray-700 text-white rounded-lg border border-gray-600 hover:bg-gray-600 hover:border-yellow-500 transition-colors">
+                                    <span class="font-semibold">\${bank.name}</span>
+                                    <span class="block text-sm text-gray-400">\${bank.questions.length} sual</span>
+                                </button>
+                            \`;
+                            container.innerHTML += button;
+                        });
+                        showPage('bank-page');
+                    }
+
+                    function startExam(categoryKey, bankIndex) {
+                        currentCategoryKey = categoryKey;
+                        currentBankIndex = bankIndex;
+                        userAnswers = {};
+                        const exam = examData[categoryKey].banks[bankIndex];
+                        document.getElementById('exam-title').textContent = \`\${examData[categoryKey].name} - \${exam.name}\`;
+                        const questionsContainer = document.getElementById('questions-container');
+                        questionsContainer.innerHTML = '';
+                        exam.questions.forEach((q, index) => {
+                            const questionHTML = \`
+                                <div class="border-b border-gray-700 pb-6">
+                                    <p class="font-semibold text-lg mb-4 text-white">\${index + 1}. \${q.q}</p>
+                                    <div class="space-y-2">
+                                        \${q.options.map((opt, i) => {
+                                            const optionLetter = String.fromCharCode(65 + i);
+                                            return \`
+                                                <div class="text-gray-300">
+                                                    <input type="radio" id="q\${index}_opt\${i}" name="q\${index}" value="\${optionLetter}" class="mr-2 accent-yellow-500">
+                                                    <label for="q\${index}_opt\${i}">\${optionLetter}) \${opt}</label>
+                                                </div>
+                                            \`;
+                                        }).join('')}
+                                    </div>
+                                </div>
+                            \`;
+                            questionsContainer.innerHTML += questionHTML;
+                        });
+                        startTimer(20 * 60);
+                        showPage('exam-page');
+                    }
+
+                    function startTimer(duration) {
+                        let timer = duration, minutes, seconds;
+                        const timerDisplay = document.getElementById('timer');
+                        clearInterval(timerInterval);
+                        timerInterval = setInterval(() => {
+                            minutes = parseInt(timer / 60, 10);
+                            seconds = parseInt(timer % 60, 10);
+                            minutes = minutes < 10 ? "0" + minutes : minutes;
+                            seconds = seconds < 10 ? "0" + seconds : seconds;
+                            timerDisplay.textContent = minutes + ":" + seconds;
+                            if (--timer < 0) {
+                                clearInterval(timerInterval);
+                                submitExam();
+                            }
+                        }, 1000);
+                    }
+
+                    function submitExam() {
+                        clearInterval(timerInterval);
+                        const questions = examData[currentCategoryKey].banks[currentBankIndex].questions;
+                        questions.forEach((_, index) => {
+                            const selectedOption = document.querySelector(\`input[name="q\${index}"]:checked\`);
+                            userAnswers[index] = selectedOption ? selectedOption.value : null;
+                        });
+                        calculateAndShowResults();
+                    }
+
+                    function calculateAndShowResults() {
+                        const questions = examData[currentCategoryKey].banks[currentBankIndex].questions;
+                        let correctCount = 0;
+                        const correctAnswersList = document.getElementById('correct-answers-list');
+                        const incorrectAnswersList = document.getElementById('incorrect-answers-list');
+                        const reviewTopics = new Set();
+                        correctAnswersList.innerHTML = '';
+                        incorrectAnswersList.innerHTML = '';
+                        questions.forEach((q, index) => {
+                            const isCorrect = userAnswers[index] === q.answer;
+                            if (isCorrect) {
+                                correctCount++;
+                                correctAnswersList.innerHTML += \`<li><b>\${index + 1}.</b> \${q.q}</li>\`;
+                            } else {
+                                incorrectAnswersList.innerHTML += \`
+                                    <li class="text-red-400">
+                                        <b>\${index + 1}.</b> \${q.q}
+                                        <span class="block text-sm ml-4 text-gray-400">Sizin cavab: <b class="text-red-400">\${userAnswers[index] || 'Boş'}</b>, Düzgün cavab: <b class="text-green-400">\${q.answer}</b></span>
+                                    </li>\`;
+                                reviewTopics.add(q.topic);
+                            }
+                        });
+                        document.getElementById('correct-count').textContent = correctCount;
+                        document.getElementById('incorrect-count').textContent = questions.length - correctCount;
+                        const percentage = Math.round((correctCount / questions.length) * 100);
+                        document.getElementById('score-text').textContent = \`\${questions.length} sualdan \${correctCount} düzgün\`;
+                        document.getElementById('final-score-percentage').textContent = \`Yekun Nəticə: \${percentage}%\`;
+                        const reviewTopicsList = document.getElementById('review-topics-list');
+                        reviewTopicsList.innerHTML = '';
+                        if (reviewTopics.size > 0) {
+                            reviewTopics.forEach(topic => {
+                                reviewTopicsList.innerHTML += \`<span class="bg-yellow-400/20 text-yellow-300 text-xs font-semibold mr-2 px-2.5 py-0.5 rounded-full">\${topic}</span>\`;
+                            });
+                        } else {
+                            reviewTopicsList.innerHTML = '<p class="text-gray-400">Təkrara ehtiyac olan mövzu tapılmadı. Təbriklər!</p>';
+                        }
+                        renderScoreChart(percentage);
+                        saveResultToLog(correctCount, questions.length, percentage);
+                        showPage('report-page');
+                    }
+                    
+                    function saveResultToLog(score, total, percentage) {
+                        const resultData = {
+                            id: Date.now(),
+                            studentName: currentUser,
+                            categoryKey: currentCategoryKey,
+                            bankIndex: currentBankIndex,
+                            score: score,
+                            total: total,
+                            percentage: percentage,
+                            date: new Date().toLocaleString('az-AZ', { day: '2-digit', month: '2-digit', year: 'numeric', hour: '2-digit', minute: '2-digit' }),
+                            userAnswers: userAnswers
+                        };
+                        let results = JSON.parse(localStorage.getItem(RESULTS_STORAGE_KEY)) || [];
+                        results.push(resultData);
+                        localStorage.setItem(RESULTS_STORAGE_KEY, JSON.stringify(results));
+                    }
+
+                    function renderScoreChart(percentage) {
+                        const options = {
+                            chart: { height: '100%', type: 'radialBar' },
+                            series: [percentage],
+                            plotOptions: {
+                                radialBar: {
+                                    hollow: { size: '70%', background: 'transparent' },
+                                    track: { background: '#4A5568' },
+                                    dataLabels: {
+                                        name: { show: false },
+                                        value: { color: '#CBD5E0', fontSize: '24px', fontWeight: 'bold', offsetY: 10, formatter: (val) => val + '%' }
+                                    }
+                                },
+                            },
+                            stroke: { lineCap: 'round' },
+                            labels: ['Nəticə'],
+                            colors: [percentage > 70 ? '#48BB78' : percentage > 40 ? '#F59E0B' : '#F56565']
+                        };
+                        const chartContainer = document.getElementById('score-chart');
+                        chartContainer.innerHTML = ''; 
+                        chart = new ApexCharts(chartContainer, options);
+                        chart.render();
+                    }
+                    
+                    function restartPortal() {
+                        showPage('main-menu-page');
+                    }
+
+                    function sendToTeacher() {
+                        document.getElementById('modal-title').textContent = "Nəticə Qeydə Alındı!";
+                        document.getElementById('modal-text').textContent = "Nəticəniz müəllim panelində uğurla yadda saxlanıldı.";
+                        document.getElementById('modal').classList.remove('hidden');
+                    }
+                    
+                    function showTeacherPanel() {
+                        const results = JSON.parse(localStorage.getItem(RESULTS_STORAGE_KEY)) || [];
+                        const tableBody = document.getElementById('results-table-body');
+                        const noResultsMsg = document.getElementById('no-results-message');
+                        tableBody.innerHTML = '';
+
+                        if (results.length === 0) {
+                            noResultsMsg.classList.remove('hidden');
+                        } else {
+                            noResultsMsg.classList.add('hidden');
+                            results.sort((a, b) => b.id - a.id);
+                            results.forEach(res => {
+                                const category = examData[res.categoryKey];
+                                const row = \`
+                                    <tr class="border-b border-gray-700 hover:bg-gray-700/50">
+                                        <td class="py-3 px-4">\${res.studentName}</td>
+                                        <td class="py-3 px-4">\${category.name} - \${category.banks[res.bankIndex].name}</td>
+                                        <td class="py-3 px-4 font-semibold \${res.percentage > 70 ? 'text-green-400' : res.percentage > 40 ? 'text-yellow-400' : 'text-red-400'}">\${res.percentage}%</td>
+                                        <td class="py-3 px-4 text-sm">\${res.date}</td>
+                                        <td class="py-3 px-4 text-center">
+                                            <button onclick="examModule.showResultDetails(\${res.id})" class="bg-yellow-500 text-black text-xs font-bold py-1 px-3 rounded hover:bg-yellow-600 transition-colors">Ətraflı Bax</button>
+                                        </td>
+                                    </tr>
+                                \`;
+                                tableBody.innerHTML += row;
+                            });
+                        }
+                        showPage('teacher-panel-page');
+                    }
+
+                    function showResultDetails(resultId) {
+                        const results = JSON.parse(localStorage.getItem(RESULTS_STORAGE_KEY)) || [];
+                        const result = results.find(r => r.id === resultId);
+                        if (!result) return;
+
+                        const category = examData[result.categoryKey];
+                        const exam = category.banks[result.bankIndex];
+                        const questions = exam.questions;
+                        
+                        const modalTitle = document.getElementById('details-modal-title');
+                        const modalContent = document.getElementById('details-modal-content');
+                        
+                        modalTitle.textContent = \`\${result.studentName} - Nəticə Detalları\`;
+                        modalContent.innerHTML = '';
+
+                        questions.forEach((q, index) => {
+                            const userAnswer = result.userAnswers[index];
+                            const isCorrect = userAnswer === q.answer;
+                            const resultColor = isCorrect ? 'border-green-500' : 'border-red-500';
+                            const resultText = isCorrect ? '<span class="font-bold text-green-400">Düzgün</span>' : '<span class="font-bold text-red-400">Səhv</span>';
+                            
+                            const detailHTML = \`
+                                <div class="p-4 border-l-4 \${resultColor} bg-gray-700/50 mb-4 rounded-r-lg">
+                                    <p class="font-bold text-gray-200 mb-2">\${index + 1}. \${q.q}</p>
+                                    <p class="text-sm text-gray-400">Tələbənin cavabı: <b class="\${isCorrect ? 'text-green-400' : 'text-red-400'}">\${userAnswer || 'Boş'}</b></p>
+                                    <p class="text-sm text-gray-400">Düzgün cavab: <b class="text-yellow-400">\${q.answer}</b></p>
+                                    <div class="mt-2 text-right text-sm">\${resultText}</div>
+                                </div>
+                            \`;
+                            modalContent.innerHTML += detailHTML;
+                        });
+
+                        document.getElementById('details-modal').classList.remove('hidden');
+                    }
+                    
+                    function showConfirm(message, onConfirm) {
+                        const modal = document.getElementById('confirm-modal');
+                        const text = document.getElementById('confirm-modal-text');
+                        const yesBtn = document.getElementById('confirm-modal-yes');
+                        const noBtn = document.getElementById('confirm-modal-no');
+
+                        text.textContent = message;
+                        modal.classList.remove('hidden');
+
+                        const yesHandler = () => {
+                            onConfirm();
+                            modal.classList.add('hidden');
+                            cleanup();
+                        };
+
+                        const noHandler = () => {
+                            modal.classList.add('hidden');
+                            cleanup();
+                        };
+                        
+                        const cleanup = () => {
+                            yesBtn.removeEventListener('click', yesHandler);
+                            noBtn.removeEventListener('click', noHandler);
+                        };
+
+                        yesBtn.addEventListener('click', yesHandler);
+                        noBtn.addEventListener('click', noHandler);
+                    }
+
+                    function clearResults() {
+                        showConfirm(
+                            "Bütün nəticələri silmək istədiyinizə əminsiniz? Bu əməliyyat geri qaytarıla bilməz.",
+                            () => {
+                                localStorage.removeItem(RESULTS_STORAGE_KEY);
+                                showTeacherPanel(); 
+                            }
+                        );
+                    }
+                    
+                    // --- Make functions globally accessible inside the module ---
+                    window.examModule = {
+                        displayQuestionBanks,
+                        startExam,
+                        showResultDetails
+                    };
+                    
+                    // --- Add Event Listeners ---
+                    document.getElementById('exam-login-btn').addEventListener('click', login);
+                    document.getElementById('show-teacher-login-btn').addEventListener('click', () => showPage('teacher-login-page'));
+                    document.getElementById('teacher-login-btn').addEventListener('click', loginTeacher);
+                    document.getElementById('back-to-student-login-btn').addEventListener('click', () => showPage('exam-login-page'));
+                    document.getElementById('exam-logout-btn').addEventListener('click', logout);
+                    document.getElementById('back-to-main-menu-btn').addEventListener('click', () => showPage('main-menu-page'));
+                    document.getElementById('submit-exam-btn').addEventListener('click', submitExam);
+                    document.getElementById('restart-portal-btn').addEventListener('click', restartPortal);
+                    document.getElementById('send-to-teacher-btn').addEventListener('click', sendToTeacher);
+                    document.getElementById('teacher-logout-btn').addEventListener('click', logoutTeacher);
+                    document.getElementById('clear-results-btn').addEventListener('click', clearResults);
+                    document.getElementById('modal-close-btn').addEventListener('click', () => document.getElementById('modal').classList.add('hidden'));
+                    document.getElementById('details-modal-close-btn').addEventListener('click', () => document.getElementById('details-modal').classList.add('hidden'));
+                    document.getElementById('details-modal-close-btn-2').addEventListener('click', () => document.getElementById('details-modal').classList.add('hidden'));
+
+
+                    // Initial setup
+                    showPage('exam-login-page');
+                })();
+            `;
+
+            contentArea.innerHTML = examHTML;
+            contentArea.appendChild(examJSScript);
+        }
+
         // --- HADİSƏ DİNLEYİCİLƏRİ ---
         document.addEventListener('DOMContentLoaded', () => {
             // Tema yoxlanışı
-            if (localStorage.getItem('theme') === 'dark') {
+            if (localStorage.getItem('theme') === 'dark' || !localStorage.getItem('theme')) {
                 document.documentElement.classList.add('dark');
                 themeToggle.innerHTML = '<i class="fas fa-sun"></i>';
             } else {
@@ -887,8 +1454,15 @@
         overlay.addEventListener('click', toggleMenu);
         document.getElementById('logo-link').addEventListener('click', (e) => { e.preventDefault(); showHomePage(); });
         document.getElementById('home-link').addEventListener('click', (e) => { e.preventDefault(); showHomePage(); });
-        document.getElementById('exam-link').addEventListener('click', (e) => { e.preventDefault(); showExamListPage(); });
         document.getElementById('labs-link').addEventListener('click', (e) => { e.preventDefault(); showArticleListPage('labs'); });
+        
+        // İmtahan linki üçün yeni event listener
+        document.getElementById('exam-link').addEventListener('click', (e) => {
+            e.preventDefault();
+            loadNewExamModule();
+            setActiveLink(e.currentTarget);
+            if(window.innerWidth < 768) toggleMenu();
+        });
         
         document.getElementById('course-materials-link').addEventListener('click', (e) => {
             e.preventDefault();
@@ -928,11 +1502,10 @@
         });
 
         contentArea.addEventListener('click', (e) => {
+            // Bu event listener artıq imtahanla bağlı deyil,
+            // çünki imtahan modulu öz daxili event listenerlərini idarə edir.
             const articleItem = e.target.closest('[data-article-id]');
             const backButton = e.target.closest('#back-to-list-btn');
-            const checkExamButton = e.target.closest('#check-exam-btn');
-            const testItem = e.target.closest('[data-test-id]');
-            const backToExamListButton = e.target.closest('#back-to-exam-list-btn');
             const courseHeader = e.target.closest('.course-header');
             const chapterLink = e.target.closest('.chapter-link');
             const copyBtn = e.target.closest('.copy-code-btn');
@@ -943,15 +1516,6 @@
             }
             if (backButton) {
                 showArticleListPage(backButton.dataset.category);
-            }
-            if (checkExamButton) {
-                checkExamAnswers(checkExamButton.dataset.testId);
-            }
-            if (testItem && !checkExamButton) {
-                showSingleExamPage(testItem.dataset.testId);
-            }
-            if (backToExamListButton) {
-                showExamListPage();
             }
             if (courseHeader) {
                 const chapterList = courseHeader.nextElementSibling;
@@ -991,4 +1555,3 @@
     </script>
 </body>
 </html>
-
