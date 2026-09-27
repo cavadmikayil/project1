@@ -1,1557 +1,336 @@
 <!DOCTYPE html>
 <html lang="az">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>cavadmikayil - İnformasiya Texnologiyaları</title>
-    <script src="https://cdn.tailwindcss.com"></script>
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
-    <link rel="preconnect" href="https://fonts.googleapis.com">
-    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&family=Orbitron:wght@700&display=swap" rel="stylesheet">
-    <script src="https://cdn.jsdelivr.net/npm/apexcharts"></script>
-    <style>
-        /* --- ƏSAS STİLLƏR --- */
-        :root {
-            --bg-primary: #f4f4f5;
-            --bg-secondary: #ffffff;
-            --bg-sidebar: #18181b;
-            --bg-sidebar-hover: #27272a;
-            --text-primary: #18181b;
-            --text-secondary: #3f3f46;
-            --text-sidebar: #d4d4d8;
-            --border-color: #e5e7eb;
-            --accent-color: #f59e0b;
-            --accent-color-active: #fbbf24;
-        }
-
-        .dark {
-            --bg-primary: #18181b;
-            --bg-secondary: #27272a;
-            --bg-sidebar: #18181b;
-            --bg-sidebar-hover: #3f3f46;
-            --text-primary: #f4f4f5;
-            --text-secondary: #a1a1aa;
-            --text-sidebar: #d4d4d8;
-            --border-color: #3f3f46;
-            --accent-color: #f59e0b;
-            --accent-color-active: #fbbf24;
-        }
-        
-        body {
-            font-family: 'Poppins', sans-serif;
-            background-color: var(--bg-primary);
-            color: var(--text-primary);
-        }
-
-        /* Login Paneli */
-        #login-container, #course-login-container {
-            background: #18181b;
-            background-image: radial-gradient(circle at top right, #f59e0b20, transparent 60%);
-        }
-        #login-box, #course-login-box {
-            background-color: rgba(39, 39, 42, 0.8);
-            backdrop-filter: blur(10px);
-        }
-        #login-btn, #course-login-btn {
-            background: linear-gradient(45deg, #f59e0b, #ea580c);
-        }
-        #login-btn:disabled {
-            opacity: 0.5;
-            cursor: not-allowed;
-        }
-
-        /* Sidebar (Açılan Menyu) */
-        #sidebar {
-            transition: transform 0.3s ease-in-out;
-            background-color: var(--bg-sidebar);
-            box-shadow: 0 4px 12px rgba(0,0,0,0.1);
-            display: flex;
-            flex-direction: column;
-            height: 100%;
-        }
-        
-        #sidebar .sidebar-header {
-            padding: 1.5rem;
-            background: var(--bg-sidebar);
-            color: white;
-            flex-shrink: 0;
-            border-bottom: 1px solid #3f3f46;
-        }
-
-        #sidebar .sidebar-header .logo-text {
-            font-family: 'Orbitron', sans-serif;
-            font-size: 1.75rem;
-            background: -webkit-linear-gradient(#f59e0b, #fbbf24);
-            -webkit-background-clip: text;
-            -webkit-text-fill-color: transparent;
-        }
-        
-        #sidebar .sidebar-header p {
-            color: #ffffff;
-            font-weight: 300;
-        }
-
-        #sidebar nav {
-            flex-grow: 1;
-            overflow-y: auto;
-        }
-        
-        #sidebar nav a {
-            padding: 1rem 1.5rem;
-            transition: all 0.2s ease-in-out;
-            border-left: 4px solid transparent;
-            color: var(--text-sidebar);
-            font-weight: 500;
-        }
-
-        #sidebar nav a:hover {
-            background-color: var(--bg-sidebar-hover);
-            color: var(--accent-color-active);
-            border-left-color: #4b5563;
-        }
-        
-        #sidebar nav a.active {
-            background: var(--bg-sidebar-hover);
-            color: var(--accent-color-active);
-            border-left-color: var(--accent-color);
-            font-weight: 600;
-        }
-
-        #sidebar nav a i {
-            transition: transform 0.2s ease;
-            width: 1.5rem;
-        }
-        
-        #sidebar nav a.active i {
-             color: var(--accent-color);
-        }
-        
-        .social-footer {
-            flex-shrink: 0;
-            border-top: 1px solid #3f3f46;
-            background-color: var(--bg-sidebar);
-        }
-        
-        .social-footer a i {
-             transition: color 0.2s ease-in-out, transform 0.2s ease-in-out;
-        }
-        
-        .social-footer a:hover i {
-            transform: scale(1.2);
-        }
-
-        header {
-            background-color: var(--bg-secondary);
-            box-shadow: 0 2px 4px rgba(0,0,0,0.05);
-            border-bottom: 1px solid var(--border-color);
-        }
-
-        #page-title {
-            color: var(--text-primary);
-            font-weight: 600;
-        }
-
-        .clickable-list-item {
-            cursor: pointer;
-            transition: all 0.2s ease-in-out;
-            box-shadow: 0 1px 3px rgba(0,0,0,0.05);
-            border: 1px solid var(--border-color);
-            background-color: var(--bg-secondary);
-        }
-        .clickable-list-item:hover {
-            transform: translateY(-4px) scale(1.02);
-            box-shadow: 0 6px 15px rgba(0,0,0,0.1);
-            border-color: var(--accent-color);
-        }
-        .clickable-list-item .fa-chevron-right {
-            transition: transform 0.2s ease;
-        }
-        .clickable-list-item:hover .fa-chevron-right {
-            transform: translateX(5px);
-            color: var(--accent-color);
-        }
-
-        #back-to-list-btn, #reset-progress-btn {
-            transition: all 0.2s ease-in-out;
-            background: linear-gradient(45deg, #f59e0b, #ea580c);
-            color: white;
-            box-shadow: 0 4px 10px rgba(245, 158, 11, 0.3);
-        }
-        #back-to-list-btn:hover, #reset-progress-btn:hover {
-            transform: translateY(-2px);
-            box-shadow: 0 6px 15px rgba(245, 158, 11, 0.4);
-        }
-
-        .article-card {
-            background-color: var(--bg-secondary);
-            border: 1px solid var(--border-color);
-            box-shadow: 0 2px 8px rgba(0,0,0,0.07);
-            border-left: 5px solid var(--accent-color);
-        }
-        .article-card h3 {
-            color: var(--text-primary);
-        }
-        .article-card .article-content {
-            color: var(--text-secondary);
-            line-height: 1.8;
-        }
-        .article-card .article-content b {
-            color: #d97706;
-        }
-        .article-card .article-content code, pre {
-            background-color: #27272a;
-            padding: 1rem;
-            border-radius: 8px;
-            color: #a1a1aa;
-            border: 1px solid #3f3f46;
-            white-space: pre-wrap;
-            word-wrap: break-word;
-            font-family: 'Courier New', Courier, monospace;
-            position: relative;
-        }
-        .copy-code-btn {
-            position: absolute;
-            top: 0.5rem;
-            right: 0.5rem;
-            background-color: #52525b;
-            color: #e4e4e7;
-            border: none;
-            padding: 0.25rem 0.5rem;
-            border-radius: 0.25rem;
-            cursor: pointer;
-            font-size: 0.8rem;
-        }
-        .copy-code-btn:hover {
-            background-color: #71717a;
-        }
-        .article-card .article-content h4 {
-            font-size: 1.25rem;
-            font-weight: 600;
-            color: #d97706;
-            border-bottom: 2px solid #fcd34d;
-            padding-bottom: 0.5rem;
-            margin-top: 1.5rem;
-            margin-bottom: 1rem;
-        }
-        
-        /* Course Materials Accordion */
-        .course-header { cursor: pointer; transition: background-color 0.2s ease-in-out; }
-        .course-header:hover { background-color: #fef3c7; }
-        .dark .course-header:hover { background-color: #3f3f46; }
-        .course-header i { transition: transform 0.3s ease-in-out; }
-        .course-header.active i { transform: rotate(90deg); }
-        .chapter-list { max-height: 0; overflow: hidden; transition: max-height 0.5s ease-in-out; }
-        .chapter-link.visited { background-color: #27272a; border-color: #4ade80; color: #a3e635; }
-        .chapter-link.visited:hover { background-color: #3f3f46; }
-
-        /* Axtarış */
-        #search-input { background-color: var(--bg-primary); border: 1px solid var(--border-color); }
-        #search-input:focus { border-color: var(--accent-color); outline: none; }
-
-        /* Tema Düyməsi */
-        #theme-toggle { background-color: var(--bg-primary); border: 1px solid var(--border-color); color: var(--text-secondary); }
-
-        ::-webkit-scrollbar { width: 10px; }
-        ::-webkit-scrollbar-track { background: #e4e4e7; }
-        .dark ::-webkit-scrollbar-track { background: #3f3f46; }
-        ::-webkit-scrollbar-thumb { background: #fcd34d; border-radius: 10px; }
-        ::-webkit-scrollbar-thumb:hover { background: #f59e0b; }
-
-        /* --- YENİ İMTAHAN MODULU STİLLƏRİ --- */
-        #content-area .gradient-bg {
-            background: linear-gradient(120deg, #1a1a1a 0%, #333333 100%);
-        }
-        #content-area .card-hover {
-            transition: all 0.3s ease;
-        }
-        #content-area .card-hover:hover {
-            transform: translateY(-8px) scale(1.03);
-            box-shadow: 0 15px 30px -5px rgba(251, 191, 36, 0.2);
-        }
-        #content-area .page {
-            animation: fadeIn 0.5s ease-in-out;
-        }
-        @keyframes fadeIn {
-            from { opacity: 0; transform: translateY(10px); }
-            to { opacity: 1; transform: translateY(0); }
-        }
-        #content-area .input-with-icon {
-            position: relative;
-        }
-        #content-area .input-with-icon svg {
-            position: absolute;
-            left: 1rem;
-            top: 50%;
-            transform: translateY(-50%);
-            color: #9ca3af;
-        }
-        #content-area .input-with-icon input {
-            padding-left: 3rem;
-        }
-    </style>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="robots" content="noindex, nofollow">
+  <meta name="description" content="Onlayn imtahan portalı">
+  <meta name="color-scheme" content="dark light">
+  <title>İmtahan Portalı</title>
+  <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Crect width='32' height='32' rx='8' fill='%23f5b301'/%3E%3Cpath d='M9 16.5l4.5 4.5L23 11.5' fill='none' stroke='%231a1400' stroke-width='3.2' stroke-linecap='round' stroke-linejoin='round'/%3E%3C/svg%3E">
+  <link rel="stylesheet" href="assets/style.css">
 </head>
-<body class="bg-gray-100">
+<body>
+  <noscript><div class="noscript">Portal üçün brauzerdə JavaScript aktiv olmalıdır.</div></noscript>
 
-    <!-- Tələbə Login Paneli -->
-    <div id="login-container" class="fixed inset-0 z-50 flex items-center justify-center p-4">
-        <div id="login-box" class="w-full max-w-sm p-8 space-y-6 rounded-2xl shadow-2xl border border-gray-700">
-            <div class="text-center space-y-2">
-                 <h2 class="text-3xl font-bold text-amber-400" style="font-family: 'Orbitron', sans-serif;">Cavad Mikayil</h2>
-                 <p class="text-xl font-medium text-white">Education Portal</p>
-            </div>
-            <div class="space-y-4">
-                <div>
-                    <input type="text" id="username-input" placeholder="İstifadəçi adı" class="w-full px-4 py-3 bg-gray-700 text-white border border-gray-600 rounded-lg focus:outline-none focus:ring-2 focus:ring-amber-500">
-                </div>
-                <div>
-                    <input type="password" id="password-input" placeholder="Şifrə" class="w-full px-4 py-3 bg-gray-700 text-white border border-gray-600 rounded-lg focus:outline-none focus:ring-2 focus:ring-amber-500">
-                </div>
-                <div class="flex items-center">
-                    <input id="remember-me-checkbox" type="checkbox" class="h-4 w-4 rounded border-gray-500 bg-gray-600 text-amber-500 focus:ring-amber-600">
-                    <label for="remember-me-checkbox" class="ml-2 block text-sm text-gray-300">Məni xatırla</label>
-                </div>
-                <p id="error-message" class="text-red-500 text-sm hidden text-center">İstifadəçi adı və ya şifrə yanlışdır.</p>
-                <p id="lockout-message" class="text-amber-400 text-sm hidden text-center"></p>
-                <button id="login-btn" class="w-full py-3 text-white font-bold rounded-lg hover:opacity-90 transition-opacity">Daxil Ol</button>
-            </div>
+  <header class="topbar">
+    <div class="topbar-inner">
+      <a class="brand" href="#" data-action="home" aria-label="Ana səhifə">
+        <span class="brand-mark" aria-hidden="true"><svg viewBox="0 0 24 24"><path d="M5 12.5l4.5 4.5L19 7.5"/></svg></span>
+        <span class="brand-text"><strong id="brand-title">İmtahan Portalı</strong><small id="brand-sub"></small></span>
+      </a>
+      <div class="topbar-right">
+        <div id="exam-timer" class="timer" hidden role="timer" aria-live="off">
+          <svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="13" r="8"/><path d="M12 9v4l2.5 2.5M9 2h6"/></svg>
+          <span id="timer-text">00:00</span>
         </div>
+        <div id="user-chip" class="user-chip" hidden>
+          <span class="avatar" id="user-initials" aria-hidden="true"></span>
+          <span class="user-name" id="user-name"></span>
+          <button class="btn btn-ghost btn-sm" data-action="logout">Çıxış</button>
+        </div>
+      </div>
     </div>
+  </header>
 
-    <!-- Course Materials Login Paneli (Gizli) -->
-    <div id="course-login-container" class="hidden fixed inset-0 z-40 flex items-center justify-center bg-black bg-opacity-75">
-        <div id="course-login-box" class="w-full max-w-sm p-8 space-y-6 rounded-2xl shadow-2xl border border-gray-700 relative">
-            <button id="close-course-login-btn" class="absolute top-4 right-4 text-gray-400 hover:text-white text-2xl font-bold">&times;</button>
-            <div class="text-center">
-                <h2 class="text-3xl font-bold text-white">Dərs Vəsaitləri</h2>
-                <p class="text-gray-400 mt-2">Giriş üçün məlumatları daxil edin</p>
-            </div>
-            <div class="space-y-4">
-                <div>
-                    <input type="text" id="course-username-input" placeholder="İstifadəçi adı" class="w-full px-4 py-3 bg-gray-700 text-white border border-gray-600 rounded-lg focus:outline-none focus:ring-2 focus:ring-amber-500">
-                </div>
-                 <div>
-                    <input type="password" id="course-password-input" placeholder="Şifrə" class="w-full px-4 py-3 bg-gray-700 text-white border border-gray-600 rounded-lg focus:outline-none focus:ring-2 focus:ring-amber-500">
-                </div>
-                 <div class="flex items-center">
-                    <input id="remember-course-checkbox" type="checkbox" class="h-4 w-4 rounded border-gray-500 bg-gray-600 text-amber-500 focus:ring-amber-600">
-                    <label for="remember-course-checkbox" class="ml-2 block text-sm text-gray-300">Məni xatırla</label>
-                </div>
-                <p id="course-error-message" class="text-red-500 text-sm hidden">İstifadəçi adı və ya şifrə yanlışdır.</p>
-                <button id="course-login-btn" class="w-full py-3 text-white font-bold rounded-lg hover:opacity-90 transition-opacity">Daxil Ol</button>
-                <button id="back-from-course-login-btn" class="w-full mt-2 py-2 text-gray-300 font-medium rounded-lg hover:bg-gray-700 transition-colors">Geri Qayıt</button>
-            </div>
+  <main id="app" class="container">
+
+    <!-- ===== Tələbə girişi ===== -->
+    <section id="view-login" class="view" hidden>
+      <div class="card auth-card">
+        <h1>Xoş gəlmisiniz</h1>
+        <p class="muted">İmtahana başlamaq üçün məlumatlarınızı daxil edin. Nəticəniz bu adla müəllimə göndəriləcək.</p>
+        <form id="login-form" novalidate>
+          <div class="field-row">
+            <label class="field">
+              <span>Ad</span>
+              <input id="in-first" autocomplete="given-name" required maxlength="40" placeholder="Məs. Aysel">
+            </label>
+            <label class="field">
+              <span>Soyad</span>
+              <input id="in-last" autocomplete="family-name" required maxlength="40" placeholder="Məs. Məmmədova">
+            </label>
+          </div>
+          <label class="field">
+            <span id="group-label">Qrup <em class="muted">(istəyə bağlı)</em></span>
+            <input id="in-group" maxlength="40" placeholder="Məs. HD-24" list="group-list" autocomplete="off">
+            <datalist id="group-list"></datalist>
+          </label>
+          <label class="field" id="code-field" hidden>
+            <span>Şəxsi kod</span>
+            <input id="in-code" maxlength="20" autocomplete="off" inputmode="text" placeholder="Müəllimin verdiyi kod">
+          </label>
+          <p class="form-error" id="login-error" role="alert" hidden></p>
+          <button class="btn btn-primary btn-block" type="submit" id="login-btn">Daxil ol</button>
+        </form>
+        <p class="conn-status small" id="conn-status" role="status"></p>
+        <div class="auth-foot">
+          <button class="link-btn" data-action="teacher-login">Müəllim paneli</button>
         </div>
+      </div>
+    </section>
+
+    <!-- ===== İmtahan seçimi ===== -->
+    <section id="view-menu" class="view" hidden>
+      <div class="page-head">
+        <div>
+          <h1>Salam, <span id="menu-name"></span></h1>
+          <p class="muted">İmtahan və ya öyrənmə testini seçin.</p>
+        </div>
+        <button class="btn btn-ghost btn-sm" data-action="refresh-menu">Yenilə</button>
+      </div>
+      <div id="pending-banner" class="banner banner-warn" hidden></div>
+      <div id="category-list" class="category-grid"></div>
+    </section>
+
+    <!-- ===== İmtahan qaydaları ===== -->
+    <section id="view-intro" class="view" hidden>
+      <div class="card intro-card">
+        <button class="btn btn-ghost btn-sm back" data-action="menu">← Geri</button>
+        <p class="eyebrow" id="intro-cat"></p>
+        <h1 id="intro-title"></h1>
+        <div class="stat-row" id="intro-stats"></div>
+        <h2 class="h-sm">Qaydalar</h2>
+        <ul class="rules" id="intro-rules"></ul>
+        <form id="start-form" novalidate>
+          <label class="field" id="exam-code-field" hidden>
+            <span>İmtahanın giriş kodu</span>
+            <input id="in-exam-code" maxlength="30" autocomplete="off" placeholder="Kodu müəllim elan edəcək">
+          </label>
+          <p class="form-error" id="start-error" role="alert" hidden></p>
+          <button class="btn btn-primary btn-block btn-lg" type="submit" id="start-btn">Başla</button>
+        </form>
+      </div>
+    </section>
+
+    <!-- ===== İmtahan ===== -->
+    <section id="view-exam" class="view" hidden>
+      <div class="exam-head">
+        <div class="exam-title">
+          <p class="eyebrow" id="exam-cat"></p>
+          <h1 id="exam-name"></h1>
+        </div>
+        <div class="progress-wrap">
+          <div class="progress-label"><span id="progress-text"></span></div>
+          <div class="progress" aria-hidden="true"><div id="progress-bar"></div></div>
+        </div>
+      </div>
+
+      <div class="exam-layout">
+        <article class="card question-card" id="question-card">
+          <div class="q-meta">
+            <span class="q-number" id="q-number"></span>
+            <span class="chip" id="q-topic"></span>
+            <button class="btn btn-ghost btn-sm flag-btn" id="flag-btn" data-action="flag" aria-pressed="false">
+              <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M5 21V4m0 0h11l-2 4 2 4H5"/></svg>
+              <span>İşarələ</span>
+            </button>
+          </div>
+          <h2 class="q-text" id="q-text"></h2>
+          <figure class="q-figure" id="q-figure" hidden><img id="q-img" alt="Sualın şəkli"></figure>
+          <div class="options" id="q-options" role="radiogroup" aria-labelledby="q-text"></div>
+          <div class="feedback" id="q-feedback" role="status" hidden></div>
+          <div class="q-nav">
+            <button class="btn btn-secondary" data-action="prev" id="prev-btn">← Əvvəlki</button>
+            <button class="btn btn-ghost btn-sm" data-action="clear-answer" id="clear-btn">Cavabı sil</button>
+            <button class="btn btn-secondary" data-action="next" id="next-btn">Növbəti →</button>
+          </div>
+        </article>
+
+        <aside class="card navigator" id="navigator">
+          <div class="nav-head">
+            <h2 class="h-sm">Suallar</h2>
+            <div class="legend" id="nav-legend"></div>
+          </div>
+          <div class="nav-grid" id="nav-grid"></div>
+          <button class="btn btn-primary btn-block" data-action="submit-exam" id="submit-btn">İmtahanı bitir</button>
+        </aside>
+      </div>
+    </section>
+
+    <!-- ===== Nəticə ===== -->
+    <section id="view-result" class="view" hidden>
+      <div class="card result-state" id="res-pending" hidden>
+        <div class="spinner" aria-hidden="true"></div>
+        <h1 id="res-pending-title">Cavablarınız yoxlanılır…</h1>
+        <p class="muted" id="res-pending-text"></p>
+        <button class="btn btn-primary" data-action="retry-submit" id="res-retry" hidden>Yenidən göndər</button>
+      </div>
+
+      <div class="card result-state" id="res-hidden" hidden>
+        <div class="big-check" aria-hidden="true">✓</div>
+        <h1>Cavablarınız qəbul edildi</h1>
+        <p class="muted" id="res-hidden-text"></p>
+        <button class="btn btn-primary" data-action="menu">Ana səhifə</button>
+      </div>
+
+      <div id="res-full" hidden>
+        <div class="card result-hero">
+          <div class="ring-wrap">
+            <svg class="ring" viewBox="0 0 120 120" aria-hidden="true">
+              <circle class="ring-track" cx="60" cy="60" r="52"/>
+              <circle class="ring-value" id="ring-value" cx="60" cy="60" r="52"/>
+            </svg>
+            <div class="ring-label"><strong id="res-percent"></strong><span id="res-fraction"></span></div>
+          </div>
+          <div class="result-info">
+            <div class="pill-row"><span class="pill" id="res-pill"></span><span class="pill grade" id="res-grade" hidden></span></div>
+            <h1 id="res-title"></h1>
+            <p class="muted" id="res-student"></p>
+            <div class="stat-row compact">
+              <div class="stat ok"><strong id="res-correct"></strong><span>düzgün</span></div>
+              <div class="stat bad"><strong id="res-wrong"></strong><span>səhv</span></div>
+              <div class="stat"><strong id="res-empty"></strong><span>boş</span></div>
+              <div class="stat"><strong id="res-time"></strong><span>vaxt</span></div>
+            </div>
+            <div id="send-status" class="send-status" role="status" hidden></div>
+          </div>
+        </div>
+
+        <div class="result-grid">
+          <div class="card">
+            <h2 class="h-sm">Mövzular üzrə nəticə</h2>
+            <p class="muted small">Ən zəif mövzular yuxarıdadır — təkrar üçün bunlardan başlayın.</p>
+            <div id="topic-list" class="bar-list"></div>
+          </div>
+          <div class="card">
+            <div class="review-head">
+              <h2 class="h-sm">Cavabların təhlili</h2>
+              <div class="seg" role="tablist" id="review-filter">
+                <button role="tab" data-filter="wrong" aria-selected="true">Səhv</button>
+                <button role="tab" data-filter="empty" aria-selected="false">Boş</button>
+                <button role="tab" data-filter="all" aria-selected="false">Hamısı</button>
+              </div>
+            </div>
+            <ol id="review-list" class="review-list"></ol>
+          </div>
+        </div>
+
+        <div class="result-actions no-print">
+          <button class="btn btn-secondary" data-action="certificate" id="cert-btn" hidden>🏅 Sertifikat</button>
+          <button class="btn btn-secondary" data-action="print">Çap et / PDF</button>
+          <button class="btn btn-primary" data-action="menu">Ana səhifə</button>
+        </div>
+      </div>
+    </section>
+
+    <!-- ===== Müəllim girişi ===== -->
+    <section id="view-teacher-login" class="view" hidden>
+      <div class="card auth-card">
+        <h1>Müəllim paneli</h1>
+        <p class="muted">Şifrə Google Cədvəlindəki "Ayarlar" vərəqində saxlanılır və serverdə yoxlanılır.</p>
+        <form id="teacher-form" novalidate>
+          <label class="field">
+            <span>Şifrə</span>
+            <input id="in-teacher-pass" type="password" autocomplete="current-password" required>
+          </label>
+          <p class="form-error" id="teacher-error" role="alert" hidden></p>
+          <button class="btn btn-primary btn-block" type="submit" id="teacher-submit">Daxil ol</button>
+        </form>
+        <div class="auth-foot">
+          <button class="link-btn" data-action="home">← Tələbə girişinə qayıt</button>
+        </div>
+      </div>
+    </section>
+
+    <!-- ===== Müəllim paneli ===== -->
+    <section id="view-teacher" class="view" hidden>
+      <div class="page-head">
+        <div>
+          <h1>Müəllim paneli</h1>
+          <p class="muted small" id="t-updated"></p>
+        </div>
+        <div class="head-actions">
+          <a class="btn btn-secondary btn-sm" id="t-sheet" target="_blank" rel="noopener">Google Cədvəli aç ↗</a>
+          <button class="btn btn-secondary btn-sm" data-action="t-refresh">Yenilə</button>
+          <button class="btn btn-secondary btn-sm" data-action="t-xlsx">Excel yüklə</button>
+          <button class="btn btn-ghost btn-sm" data-action="t-logout">Çıxış</button>
+        </div>
+      </div>
+
+      <div id="t-warnings"></div>
+      <div class="stat-row tiles" id="t-tiles"></div>
+
+      <div class="toolbar">
+        <input id="t-search" type="search" placeholder="Ad, soyad, qrup və ya cəhd ID…" aria-label="Axtar">
+        <select id="t-exam" aria-label="İmtahan"></select>
+        <select id="t-group" aria-label="Qrup"></select>
+      </div>
+      <div class="seg tabs" role="tablist" id="t-tabs">
+        <button role="tab" data-tab="results" aria-selected="true">Cəhdlər</button>
+        <button role="tab" data-tab="students" aria-selected="false">Tələbələr</button>
+        <button role="tab" data-tab="stats" aria-selected="false">Statistika</button>
+        <button role="tab" data-tab="questions" aria-selected="false">Çətin suallar</button>
+      </div>
+
+      <div class="card flush" id="t-results">
+        <div class="table-wrap">
+          <table class="table">
+            <thead>
+              <tr>
+                <th>Tarix</th><th>Tələbə</th><th>Qrup</th><th>İmtahan</th>
+                <th class="num">Nəticə</th><th>Qiymət</th><th class="num">Vaxt</th><th class="num" title="Başqa tab/pəncərəyə keçid sayı">Tab</th><th></th>
+              </tr>
+            </thead>
+            <tbody id="t-body"></tbody>
+          </table>
+        </div>
+        <p class="empty" id="t-empty" hidden>Heç bir nəticə tapılmadı.</p>
+      </div>
+
+      <div class="card flush" id="t-students" hidden>
+        <p class="muted small pad" id="t-students-note"></p>
+        <div class="table-wrap">
+          <table class="table">
+            <thead><tr><th>Tələbə</th><th>Qrup</th><th>Status</th><th class="num">Cəhd</th><th class="num">Ən yaxşı</th><th>Qiymət</th></tr></thead>
+            <tbody id="t-students-body"></tbody>
+          </table>
+        </div>
+      </div>
+
+      <div id="t-stats" class="stats-grid" hidden>
+        <div class="card"><h2 class="h-sm">Qiymət paylanması</h2><div id="chart-grades" class="bar-list"></div></div>
+        <div class="card"><h2 class="h-sm">Qruplar üzrə orta nəticə</h2><div id="chart-groups" class="bar-list"></div></div>
+        <div class="card wide"><h2 class="h-sm">Mövzular üzrə düzgün cavab faizi</h2><p class="muted small">Ən zəif mövzular yuxarıdadır.</p><div id="chart-topics" class="bar-list"></div></div>
+      </div>
+
+      <div class="card" id="t-questions" hidden>
+        <p class="muted small">Seçilmiş cəhdlər üzrə ən az düzgün cavablanan suallar. Çox aşağı faiz — səhv cavab açarı və ya anlaşılmaz sual ola bilər (ID ilə "Suallar" vərəqində tapın).</p>
+        <ol id="t-qlist" class="review-list"></ol>
+      </div>
+    </section>
+  </main>
+
+  <!-- Sertifikat (yalnız çap üçün) -->
+  <section id="certificate" class="certificate" aria-hidden="true">
+    <div class="cert-inner">
+      <div class="cert-mark" aria-hidden="true"><svg viewBox="0 0 24 24"><path d="M5 12.5l4.5 4.5L19 7.5"/></svg></div>
+      <p class="cert-org" id="cert-org"></p>
+      <h1>SERTİFİKAT</h1>
+      <p class="cert-lead">Bu sertifikat təsdiq edir ki,</p>
+      <p class="cert-name" id="cert-name"></p>
+      <p class="cert-lead"><b id="cert-exam"></b> imtahanını uğurla bitirmişdir.</p>
+      <div class="cert-stats">
+        <div><span>Nəticə</span><strong id="cert-score"></strong></div>
+        <div><span>Qiymət</span><strong id="cert-grade"></strong></div>
+        <div><span>Tarix</span><strong id="cert-date"></strong></div>
+      </div>
+      <p class="cert-id">Yoxlama kodu: <span id="cert-id"></span></p>
     </div>
-
-    <!-- Əsas Tətbiq Konteyneri (Gizli) -->
-    <div id="app-container" class="hidden">
-        <!-- Sidebar (Açılan Menyu) -->
-        <div id="sidebar" class="fixed top-0 left-0 w-64 z-30 transform -translate-x-full md:translate-x-0">
-            <a href="#" id="logo-link" class="sidebar-header text-center block">
-                <h2 class="logo-text">cavadmikayil</h2>
-                <p class="text-sm font-light mt-1">Informasiya Texnologiyalari</p>
-            </a>
-            <nav class="mt-4">
-                <a href="#" id="home-link" class="flex items-center">
-                    <i class="fas fa-home text-center"></i>
-                    <span class="mx-3">Ana Səhifə</span>
-                </a>
-                <a href="#" id="course-materials-link" class="flex items-center">
-                    <i class="fas fa-book-open text-center"></i>
-                    <span class="mx-3">Course Materials</span>
-                </a>
-                <a href="#" id="network-link" class="flex items-center">
-                    <i class="fas fa-network-wired text-center"></i>
-                    <span class="mx-3">Network Dərsləri</span>
-                </a>
-                <a href="#" id="system-link" class="flex items-center">
-                    <i class="fas fa-cogs text-center"></i>
-                    <span class="mx-3">System Engineering</span>
-                </a>
-                <a href="#" id="cyber-link" class="flex items-center">
-                    <i class="fas fa-shield-halved text-center"></i>
-                    <span class="mx-3">Cybersecurity</span>
-                </a>
-                <a href="#" id="ai-link" class="flex items-center">
-                    <i class="fas fa-robot text-center"></i>
-                    <span class="mx-3">Süni İntellekt (AI)</span>
-                </a>
-                <a href="#" id="development-link" class="flex items-center">
-                    <i class="fas fa-code text-center"></i>
-                    <span class="mx-3">Development</span>
-                </a>
-                <a href="#" id="cloud-link" class="flex items-center">
-                    <i class="fas fa-cloud text-center"></i>
-                    <span class="mx-3">Cloud</span>
-                </a>
-                <a href="#" id="security-link" class="flex items-center">
-                    <i class="fas fa-user-shield text-center"></i>
-                    <span class="mx-3">IT Security</span>
-                </a>
-                <a href="#" id="itgovernance-link" class="flex items-center">
-                    <i class="fas fa-balance-scale text-center"></i>
-                    <span class="mx-3">IT Governance</span>
-                </a>
-                <a href="#" id="helpdesk-link" class="flex items-center">
-                    <i class="fas fa-headset text-center"></i>
-                    <span class="mx-3">Helpdesk</span>
-                </a>
-                <a href="#" id="exam-link" class="flex items-center">
-                    <i class="fas fa-file-alt text-center"></i>
-                    <span class="mx-3">Exam</span>
-                </a>
-                <a href="#" id="labs-link" class="flex items-center">
-                    <i class="fas fa-flask text-center"></i>
-                    <span class="mx-3">Labs</span>
-                </a>
-                <a href="https://www.youtube.com/channel/UCDh-QcTsPITzBQQn7I2vpQg/videos" target="_blank" rel="noopener noreferrer" id="youtube-link" class="flex items-center">
-                    <i class="fab fa-youtube text-center text-red-600"></i>
-                    <span class="mx-3">Youtube</span>
-                </a>
-                <a href="#" id="logout-link" class="flex items-center mt-4">
-                    <i class="fas fa-sign-out-alt text-center"></i>
-                    <span class="mx-3">Log Out</span>
-                </a>
-            </nav>
-            <div class="social-footer p-4">
-                 <div class="flex justify-around items-center">
-                    <a href="https://cavadmikayil.com" target="_blank" rel="noopener noreferrer" class="text-gray-400 hover:text-orange-500" title="Blog Saytım">
-                        <i class="fas fa-blog text-2xl"></i>
-                    </a>
-                    <a href="https://az.linkedin.com/in/cavad-mikayil-0a8153212" target="_blank" rel="noopener noreferrer" class="text-gray-400 hover:text-blue-700" title="Linkedin">
-                        <i class="fab fa-linkedin text-2xl"></i>
-                    </a>
-                    <a href="https://instagram.com/cavadmikayil.com_" target="_blank" rel="noopener noreferrer" class="text-gray-400 hover:text-pink-600" title="Instagram">
-                        <i class="fab fa-instagram text-2xl"></i>
-                    </a>
-                    <a href="https://t.me/cavadmikayil" target="_blank" rel="noopener noreferrer" class="text-gray-400 hover:text-blue-500" title="Telegram">
-                        <i class="fab fa-telegram-plane text-2xl"></i>
-                    </a>
-                </div>
-            </div>
-        </div>
-
-        <!-- Əsas Məzmun -->
-        <div id="main-content" class="md:ml-64">
-            <header class="bg-white p-4 flex justify-between items-center sticky top-0 z-10">
-                <button id="menu-btn" class="text-gray-600 focus:outline-none md:hidden">
-                    <i class="fas fa-bars text-2xl"></i>
-                </button>
-                <div class="text-xl" id="page-title">Ana Səhifə</div>
-                <div class="flex items-center gap-4">
-                    <div class="relative hidden md:block">
-                        <input type="text" id="search-input" placeholder="Axtar..." class="w-48 lg:w-64 pl-10 pr-4 py-2 rounded-lg text-sm focus:outline-none transition-all duration-300">
-                        <i class="fas fa-search absolute left-3 top-1/2 -translate-y-1/2 text-gray-400"></i>
-                    </div>
-                    <button id="theme-toggle" class="h-10 w-10 flex items-center justify-center rounded-full transition-colors duration-300">
-                        <i class="fas fa-moon"></i>
-                    </button>
-                </div>
-            </header>
-            <main id="content-area" class="p-0 md:p-0 dark:gradient-bg" style="height: calc(100vh - 72px); overflow-y: auto;"></main>
-        </div>
-    </div>
-    <div id="overlay" class="fixed inset-0 bg-black opacity-50 z-20 hidden md:hidden"></div>
-
-
-    <script>
-        // --- BÜTÜN MƏQALƏLƏR ÜÇÜN MƏLUMAT BAZASI ---
-        const allContent = {
-            labs: {
-                title: "CCNA Laboratoriya İşləri",
-                articles: [
-                    { id: 'lab1', title: "Lab 1: Basic Device Configuration", content: "Bu laboratoriya işində Cisco router və switch-lərin əsas konfiqurasiyası addım-addım göstərilir. Hostname, parollar və interfeys IP ünvanlarının təyin edilməsini öyrənəcəksiniz." },
-                    { id: 'lab2', title: "Lab 2: Static Routing", content: "İki fərqli şəbəkə arasında əlaqə yaratmaq üçün statik marşrutların necə konfiqurasiya edildiyini öyrənin. Bu, kiçik şəbəkələr üçün fundamental bir bacarıqdır." },
-                    { id: 'lab3', title: "Lab 3: Inter-VLAN Routing", content: "Router-on-a-stick metodu ilə fərqli VLAN-lar arasında məlumat axınını təmin edin. Bu, şəbəkə seqmentasiyasının vacib bir hissəsidir." },
-                    { id: 'lab4', title: "Lab 4: DHCP Server", content: "Cisco router-i DHCP server kimi konfiqurasiya edərək şəbəkədəki cihazlara avtomatik IP ünvanların paylanmasını təmin edin." },
-                    { id: 'lab5', title: "Lab 5: Standard ACL", content: "Standard Access Control List (ACL) istifadə edərək şəbəkə trafiyini mənbə IP ünvanına görə məhdudlaşdırmağı öyrənin." },
-                    { id: 'lab6', title: "Lab 6: NAT Overload (PAT)", content: "Daxili (private) IP ünvanları bir xarici (public) IP ünvanına çevirərək internetə çıxışı təmin edən Port Address Translation (PAT) konfiqurasiyası." },
-                    { id: 'lab7', title: "Lab 7: Port Security", content: "Switch portlarına icazəsiz cihazların qoşulmasının qarşısını almaq üçün port təhlükəsizliyi funksiyasını aktivləşdirin." },
-                    { id: 'lab8', title: "Lab 8: OSPF (Single-Area)", content: "OSPF (Open Shortest Path First) dinamik marşrutlaşdırma protokolunun tək bir sahədə (single-area) konfiqurasiyası." },
-                    { id: 'lab9', title: "Lab 9: EtherChannel (LACP)", content: "Switch-lər arasında bir neçə fiziki portu birləşdirərək məntiqi bir kanal yaratmaqla ötürmə qabiliyyətini və etibarlılığı artırın." },
-                    { id: 'lab10', title: "Lab 10: SSH Konfiqurasiyası", content: "Cihazlara təhlükəsiz uzaqdan idarəetmə girişi üçün Telnet əvəzinə SSH (Secure Shell) konfiqurasiya edin." }
-                ]
-            },
-            network: { 
-                title: "Network Dərsləri", 
-                articles: [
-                    { id: 'net1', title: "OSI Modeli Nədir?", content: "<h4>Giriş</h4><p>OSI (Open Systems Interconnection) modeli, şəbəkə rabitəsinin necə baş verdiyini anlamaq üçün istifadə olunan 7 səviyyəli bir çərçivədir. Hər səviyyə müəyyən bir funksiyanı yerinə yetirir və yuxarıdakı və aşağıdakı səviyyələrlə qarşılıqlı əlaqədə olur.</p><h4>7 Səviyyə</h4><p><b>7. Application (Tətbiq):</b> İstifadəçinin birbaşa qarşılıqlı əlaqədə olduğu səviyyə. Məsələn, veb brauzer (HTTP) və ya e-poçt proqramı (SMTP).<br><b>6. Presentation (Təqdimat):</b> Məlumatın formatını müəyyənləşdirir, şifrələmə və sıxılma kimi funksiyaları yerinə yetirir.<br><b>5. Session (Sessiya):</b> Cihazlar arasında əlaqənin (sessiyanın) qurulmasını, idarə olunmasını və dayandırılmasını təmin edir.<br><b>4. Transport (Nəqliyyat):</b> Məlumatın başdan-başa etibarlı şəkildə ötürülməsini təmin edir. TCP və UDP protokolları burada işləyir.<br><b>3. Network (Şəbəkə):</b> Məlumat paketlərinin fərqli şəbəkələr arasında ən optimal yolla (marşrutlaşdırma) hədəfə çatdırılmasını təmin edir. IP ünvanları bu səviyyədə istifadə olunur.<br><b>2. Data Link (Kanal):</b> Məlumatın eyni şəbəkədəki cihazlar arasında xətasız ötürülməsini təmin edir. MAC ünvanları və switch-lər bu səviyyədə fəaliyyət göstərir.<br><b>1. Physical (Fiziki):</b> Məlumatın bitlər (0 və 1-lər) şəklində kabellər, radio siqnalları kimi fiziki mühitlərdə ötürülməsini təmin edir.</p>" },
-                    { id: 'net2', title: "TCP/IP Modeli", content: "<h4>Giriş</h4><p>TCP/IP modeli, İnternetin əsasını təşkil edən protokollar toplusudur və OSI modelinə daha praktik bir alternativdir. O, adətən 4 səviyyədən ibarətdir.</p><h4>4 Səviyyə</h4><p><b>1. Application (Tətbiq):</b> OSI modelinin Tətbiq, Təqdimat və Sessiya səviyyələrini birləşdirir. HTTP, FTP, SMTP kimi protokolları əhatə edir.<br><b>2. Transport (Nəqliyyat):</b> OSI modelindəki Nəqliyyat səviyyəsinə uyğundur. TCP (etibarlı) və UDP (sürətli, etibarsız) protokolları ilə məlumatın ötürülməsini idarə edir.<br><b>3. Internet (İnternet):</b> OSI modelinin Şəbəkə səviyyəsinə uyğundur. Paketlərin mənbədən hədəfə yönləndirilməsi (marşrutlaşdırılması) üçün IP (Internet Protocol) protokolunu istifadə edir.<br><b>4. Network Access / Link (Şəbəkəyə Giriş):</b> OSI modelinin Kanal və Fiziki səviyyələrini birləşdirir. Məlumatın fiziki şəbəkə üzərindən necə ötürüləcəyini müəyyənləşdirir (məsələn, Ethernet, Wi-Fi).</p>" },
-                    { id: 'net3', title: "IP Ünvanlar və Subnetting", content: "<h4>IP Ünvan Nədir?</h4><p>IP (Internet Protocol) ünvanı, bir kompüter şəbəkəsindəki bir cihaza təyin edilmiş unikal rəqəmsal bir etiketdir. IPv4 (32-bit) və IPv6 (128-bit) olmaqla iki əsas versiyası var.</p><h4>Subnetting Nədir?</h4><p>Subnetting, böyük bir IP şəbəkəsini daha kiçik, idarəolunan alt şəbəkələrə (subnetlərə) bölmək prosesidir. Bu, performansı artırır, təhlükəsizliyi gücləndirir və ünvanların daha səmərəli istifadəsinə imkan verir.<br>Subnet mask, bir IP ünvanının hansı hissəsinin şəbəkəni və hansı hissəsinin hostu (cihazı) təmsil etdiyini müəyyənləşdirir. Məsələn, <b>255.255.255.0</b> subnet maskı ilk üç oktetin şəbəkə, son oktetin isə host üçün olduğunu göstərir.</p><pre><code class='language-bash'># Nümunə: 192.168.1.10 / 255.255.255.0\nNetwork ID: 192.168.1.0\nHost ID: 10\nBroadcast Address: 192.168.1.255</code><button class='copy-code-btn'><i class='fas fa-copy'></i></button></pre>" },
-                    { id: 'net4', title: "Router, Switch, Hub Arasındakı Fərq", content: "<h4>Hub</h4><p>Ən bəsit şəbəkə cihazıdır. Bir portuna gələn məlumatı digər bütün portlarına təkrarlayır (broadcast). Bu, lazımsız trafik yaradır və toqquşmalara (collisions) səbəb olur. Müasir şəbəkələrdə demək olar ki, istifadə edilmir.</p><h4>Switch</h4><p>Hub-dan daha ağıllı bir cihazdır. MAC ünvan cədvəli yaradaraq hansı cihazın hansı porta qoşulduğunu öyrənir. Məlumatı yalnız hədəf cihazın qoşulu olduğu porta göndərir. Bu, şəbəkənin səmərəliliyini artırır və toqquşma domenlərini ayırır.</p><h4>Router</h4><p>Ən ağıllı cihazdır. Fərqli şəbəkələri (məsələn, ev şəbəkənizi İnternetlə) bir-birinə bağlayır. IP ünvanlarına əsaslanaraq məlumat paketlərini şəbəkələr arasında yönləndirir (marşrutlaşdırır). Broadcast domenlərini ayırır və şəbəkə üçün bir çox təhlükəsizlik funksiyasını təmin edir.</p>" },
-                    { id: 'net5', title: "TCP və UDP Protokolları", content: "<h4>TCP (Transmission Control Protocol)</h4><p><b>Etibarlı (Reliable):</b> TCP, göndərilən hər bir məlumat paketinin hədəfə çatıb-çatmadığını yoxlayır. Paket itərsə, yenidən göndərir. Buna 'three-way handshake' (üçtərəfli əlsıxma) ilə nail olur.<br><b>Sıralı (Ordered):</b> Paketlərin düzgün ardıcıllıqla çatdırılmasını təmin edir.<br><b>İstifadə Sahələri:</b> Veb səhifələrin yüklənməsi (HTTP/HTTPS), fayl transferi (FTP), e-poçt (SMTP) kimi məlumatın itkisiz və tam ötürülməsinin vacib olduğu yerlərdə istifadə olunur.</p><h4>UDP (User Datagram Protocol)</h4><p><b>Etibarsız (Unreliable):</b> UDP, paketlərin çatıb-çatmadığını yoxlamır. İtən paketlər yenidən göndərilmir.<br><b>Sırasız (Unordered):</b> Paketlərin ardıcıllığına zəmanət vermir.<br><b>Sürətli:</b> Etibarlılıq yoxlamaları olmadığı üçün TCP-dən daha sürətlidir.<br><b>İstifadə Sahələri:</b> Onlayn oyunlar, video və səs axını (streaming), DNS sorğuları kimi sürətin etibarlılıqdan daha vacib olduğu tətbiqlərdə istifadə olunur.</p>" },
-                    { id: 'net6', title: "DNS Nədir və Necə İşləyir?", content: "Bu, DNS haqqında məqalədir." },
-                    { id: 'net7', title: "DHCP Protokolu", content: "Bu, DHCP haqqında məqalədir." },
-                    { id: 'net8', title: "NAT və PAT Texnologiyaları", content: "Bu, NAT və PAT haqqında məqalədir." },
-                    { id: 'net9', title: "VLAN Konsepti", content: "Bu, VLAN haqqında məqalədir." },
-                    { id: 'net10', title: "Firewall Növləri", content: "Bu, Firewall haqqında məqalədir." }
-                ]
-            },
-            system: { 
-                title: "System Engineering", 
-                articles: Array.from({length: 10}, (_, i) => ({id: `sys${i+1}`, title: `System Engineering Mövzu ${i+1}`, content: `Bu, System Engineering haqqında ${i+1}-ci məqalədir.`}))
-            },
-            cyber: { 
-                title: "Cybersecurity", 
-                articles: Array.from({length: 10}, (_, i) => ({id: `cyb${i+1}`, title: `Cybersecurity Mövzu ${i+1}`, content: `Bu, Cybersecurity haqqında ${i+1}-ci məqalədir.`})) 
-            },
-            ai: { title: "Süni İntellekt (AI)", articles: Array.from({length: 10}, (_, i) => ({id: `ai${i+1}`, title: `AI Mövzu ${i+1}`, content: `Bu, Süni İntellekt haqqında ${i+1}-ci məqalədir.`})) },
-            development: { title: "Development", articles: Array.from({length: 10}, (_, i) => ({id: `dev${i+1}`, title: `Development Mövzu ${i+1}`, content: `Bu, Development haqqında ${i+1}-ci məqalədir.`})) },
-            cloud: { title: "Cloud Computing", articles: Array.from({length: 10}, (_, i) => ({id: `cld${i+1}`, title: `Cloud Mövzu ${i+1}`, content: `Bu, Cloud Computing haqqında ${i+1}-ci məqalədir.`})) },
-            security: { title: "IT Security", articles: Array.from({length: 10}, (_, i) => ({id: `sec${i+1}`, title: `IT Security Mövzu ${i+1}`, content: `Bu, IT Security haqqında ${i+1}-ci məqalədir.`})) },
-            itgovernance: { title: "IT Governance", articles: Array.from({length: 10}, (_, i) => ({id: `itg${i+1}`, title: `IT Governance Mövzu ${i+1}`, content: `Bu, IT Governance haqqında ${i+1}-ci məqalədir.`})) },
-            helpdesk: { title: "Helpdesk / Service Desk", articles: Array.from({length: 10}, (_, i) => ({id: `hd${i+1}`, title: `Helpdesk Mövzu ${i+1}`, content: `Bu, Helpdesk haqqında ${i+1}-ci məqalədir.`})) }
-        };
-
-        // --- ELEMENTLƏRİN SEÇİLMƏSİ ---
-        const loginContainer = document.getElementById('login-container');
-        const appContainer = document.getElementById('app-container');
-        const usernameInput = document.getElementById('username-input');
-        const passwordInput = document.getElementById('password-input');
-        const loginBtn = document.getElementById('login-btn');
-        const errorMessage = document.getElementById('error-message');
-        const lockoutMessage = document.getElementById('lockout-message');
-        const rememberMeCheckbox = document.getElementById('remember-me-checkbox');
-
-        const courseLoginContainer = document.getElementById('course-login-container');
-        const closeCourseLoginBtn = document.getElementById('close-course-login-btn');
-        const courseUsernameInput = document.getElementById('course-username-input');
-        const coursePasswordInput = document.getElementById('course-password-input');
-        const courseLoginBtn = document.getElementById('course-login-btn');
-        const courseErrorMessage = document.getElementById('course-error-message');
-        const backFromCourseLoginBtn = document.getElementById('back-from-course-login-btn');
-        const rememberCourseCheckbox = document.getElementById('remember-course-checkbox');
-        
-        const menuBtn = document.getElementById('menu-btn');
-        const sidebar = document.getElementById('sidebar');
-        const overlay = document.getElementById('overlay');
-        const contentArea = document.getElementById('content-area');
-        const pageTitle = document.getElementById('page-title');
-        const allLinks = Array.from(document.querySelectorAll('nav a'));
-        const searchInput = document.getElementById('search-input');
-        const themeToggle = document.getElementById('theme-toggle');
-
-        const CORRECT_USERNAME = "cavadmikayil";
-        const CORRECT_PASSWORD = "1923";
-        const COURSE_USERNAME = "cavadmikayil";
-        const COURSE_PASSWORD = "1918";
-
-        let loginAttempts = 0;
-        let lockoutUntil = null;
-        let lockoutTimerInterval = null;
-
-        // --- FUNKSİYALAR ---
-
-        function updateLockoutTimer() {
-            if (lockoutUntil && new Date() < lockoutUntil) {
-                const remaining = Math.ceil((lockoutUntil - new Date()) / 1000);
-                const minutes = Math.floor(remaining / 60);
-                const seconds = remaining % 60;
-                lockoutMessage.textContent = `Çox sayda səhv cəhd. Zəhmət olmasa ${minutes}:${seconds < 10 ? '0' : ''}${seconds} sonra yenidən yoxlayın.`;
-                lockoutMessage.classList.remove('hidden');
-                loginBtn.disabled = true;
-            } else {
-                clearInterval(lockoutTimerInterval);
-                lockoutTimerInterval = null;
-                lockoutUntil = null;
-                loginAttempts = 0;
-                lockoutMessage.classList.add('hidden');
-                loginBtn.disabled = false;
-            }
-        }
-
-        function handleLogin() {
-            if (lockoutUntil && new Date() < lockoutUntil) {
-                return; // Still locked out
-            }
-
-            if (usernameInput.value === CORRECT_USERNAME && passwordInput.value === CORRECT_PASSWORD) {
-                if (rememberMeCheckbox.checked) {
-                    localStorage.setItem('rememberedUser', 'true');
-                } else {
-                    localStorage.removeItem('rememberedUser');
-                }
-                loginContainer.classList.add('hidden');
-                appContainer.classList.remove('hidden');
-                errorMessage.classList.add('hidden');
-                loginAttempts = 0; // Reset on success
-                showHomePage();
-            } else {
-                loginAttempts++;
-                errorMessage.classList.remove('hidden');
-                usernameInput.value = '';
-                passwordInput.value = '';
-                if (loginAttempts >= 3) {
-                    lockoutUntil = new Date(Date.now() + 5 * 60 * 1000); // 5 minutes
-                    errorMessage.classList.add('hidden');
-                    updateLockoutTimer();
-                    lockoutTimerInterval = setInterval(updateLockoutTimer, 1000);
-                }
-            }
-        }
-
-        function handleLogout() {
-            localStorage.removeItem('rememberedUser');
-            localStorage.removeItem('rememberedCourseUser');
-            appContainer.classList.add('hidden');
-            loginContainer.classList.remove('hidden');
-            usernameInput.value = '';
-            passwordInput.value = '';
-        }
-
-        function showCourseLoginPage() {
-            courseLoginContainer.classList.remove('hidden');
-        }
-
-        function hideCourseLoginPage() {
-            courseLoginContainer.classList.add('hidden');
-            courseUsernameInput.value = '';
-            coursePasswordInput.value = '';
-            courseErrorMessage.classList.add('hidden');
-        }
-
-        function handleCourseLogin() {
-            if (courseUsernameInput.value === COURSE_USERNAME && coursePasswordInput.value === COURSE_PASSWORD) {
-                if(rememberCourseCheckbox.checked) {
-                    localStorage.setItem('rememberedCourseUser', 'true');
-                } else {
-                    localStorage.removeItem('rememberedCourseUser');
-                }
-                hideCourseLoginPage();
-                showCourseLinktreePage();
-            } else {
-                courseErrorMessage.classList.remove('hidden');
-            }
-        }
-        
-        function getCourseProgress() {
-            const progress = localStorage.getItem('courseProgress');
-            return progress ? JSON.parse(progress) : {};
-        }
-
-        function saveCourseProgress(chapterId) {
-            const progress = getCourseProgress();
-            progress[chapterId] = true;
-            localStorage.setItem('courseProgress', JSON.stringify(progress));
-        }
-
-        function showCourseLinktreePage() {
-            pageTitle.textContent = "Dərs Vəsaitləri";
-            contentArea.className = "p-4 md:p-6"; // Reset content area class
-            let linksHTML = `<div class="max-w-4xl mx-auto space-y-4">
-                                <div class="text-right mb-4">
-                                    <button id="reset-progress-btn" class="text-sm font-semibold py-2 px-4 rounded-lg">
-                                        <i class="fas fa-trash-alt mr-2"></i>Tərəqqini Sıfırla
-                                    </button>
-                                </div>
-                            `;
-
-            const sections = {
-                "IT Helpdesk Dərsləri": {key: 'helpdesk', count: 40},
-                "Şəbəkə İnzibatçılığı Dərsləri": {key: 'network-admin', count: 40},
-                "Sistem Administratoru Dərsləri": {key: 'sysadmin', count: 40}
-            };
-            
-            const progress = getCourseProgress();
-
-            for (const sectionTitle in sections) {
-                const sectionData = sections[sectionTitle];
-                linksHTML += `
-                    <div class="bg-white dark:bg-zinc-800 rounded-lg shadow-md">
-                        <h3 class="course-header flex justify-between items-center p-4 font-bold text-lg text-amber-600">
-                            <span>${sectionTitle}</span>
-                            <i class="fas fa-chevron-right"></i>
-                        </h3>
-                        <div class="chapter-list border-t border-gray-200 dark:border-zinc-700">
-                            <div class="p-4 grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 gap-4">
-                `;
-                for (let i = 1; i <= sectionData.count; i++) {
-                    const chapterId = `${sectionData.key}-${i}`;
-                    const isVisited = progress[chapterId];
-                    let link = '#';
-                    let isClickable = false;
-                    if (sectionTitle === "IT Helpdesk Dərsləri" && i === 1) {
-                        link = 'https://cavadmikayil.github.io/project2/';
-                        isClickable = true;
-                    }
-                    linksHTML += `
-                        <a href="${link}" data-chapter-id="${chapterId}" ${isClickable ? 'target="_blank" rel="noopener noreferrer"' : ''} class="chapter-link flex items-center justify-center p-3 font-semibold text-center text-sm rounded-lg linktree-link ${!isClickable ? 'opacity-50 cursor-not-allowed' : ''} ${isVisited ? 'visited' : ''}">
-                           ${isVisited ? '<i class="fas fa-check-circle mr-2"></i>' : ''} <span>Chapter ${i}</span>
-                        </a>
-                    `;
-                }
-                linksHTML += `</div></div></div>`;
-            }
-
-            linksHTML += `</div>`;
-            contentArea.innerHTML = linksHTML;
-            contentArea.scrollTop = 0;
-            setActiveLink(document.getElementById('course-materials-link'));
-            if(window.innerWidth < 768) toggleMenu();
-        }
-
-        function toggleMenu() {
-            sidebar.classList.toggle('-translate-x-full');
-            overlay.classList.toggle('hidden');
-        }
-
-        function setActiveLink(activeLink) {
-            allLinks.forEach(link => {
-                if(link.id !== 'youtube-link') link.classList.remove('active');
-            });
-            if (activeLink && activeLink.id !== 'youtube-link') {
-                activeLink.classList.add('active');
-            }
-        }
-
-        function showHomePage() {
-            pageTitle.textContent = "Ana Səhifə";
-            contentArea.className = "p-0 md:p-0"; // Reset content area class
-            contentArea.innerHTML = `<iframe src="https://cavadmikayil.com" class="w-full h-full border-0 rounded-lg shadow-inner bg-white" title="cavadmikayil.com" onerror="this.outerHTML='<div class=\\'bg-red-100 border border-red-400 text-red-700 px-4 py-3 rounded-lg relative\\'><strong>Xəta:</strong> cavadmikayil.com saytını yükləmək mümkün olmadı.</div>'"></iframe>`;
-            setActiveLink(document.getElementById('home-link'));
-            if(window.innerWidth < 768 && !sidebar.classList.contains('-translate-x-full')) {
-                toggleMenu();
-            }
-        }
-
-        function showArticleListPage(categoryKey) {
-            const category = allContent[categoryKey];
-            pageTitle.textContent = category.title;
-            contentArea.className = "p-4 md:p-6"; // Reset content area class
-            let listHTML = '<div class="space-y-4">';
-            category.articles.forEach(article => {
-                listHTML += `<div class="bg-white dark:bg-zinc-800 p-5 rounded-lg clickable-list-item flex justify-between items-center" data-category="${categoryKey}" data-article-id="${article.id}"><span class="font-semibold text-gray-800 dark:text-gray-200">${article.title}</span><i class="fas fa-chevron-right text-gray-400"></i></div>`;
-            });
-            listHTML += '</div>';
-            contentArea.innerHTML = listHTML;
-            contentArea.scrollTop = 0;
-            setActiveLink(document.getElementById(`${categoryKey}-link`));
-            if(window.innerWidth < 768) toggleMenu();
-        }
-
-        function showSingleArticlePage(categoryKey, articleId) {
-            const category = allContent[categoryKey];
-            const article = category.articles.find(a => a.id === articleId);
-            pageTitle.textContent = article.title;
-            contentArea.className = "p-4 md:p-6"; // Reset content area class
-            const articleHTML = `<div class="space-y-6"><button class="text-white font-bold py-2 px-4 rounded-lg inline-flex items-center" id="back-to-list-btn" data-category="${categoryKey}"><i class="fas fa-arrow-left mr-2"></i>Geri</button><div class="p-6 md:p-8 rounded-lg article-card"><h3 class="text-2xl md:text-3xl font-bold mb-4">${article.title}</h3><div class="article-content text-base md:text-lg">${article.content}</div></div></div>`;
-            contentArea.innerHTML = articleHTML;
-            contentArea.scrollTop = 0;
-        }
-
-        function handleSearch(e) {
-            const searchTerm = e.target.value.toLowerCase().trim();
-            if (searchTerm.length < 3) {
-                if(pageTitle.textContent.includes('Axtarış Nəticələri')) showHomePage();
-                return;
-            }
-            const results = [];
-            for (const categoryKey in allContent) {
-                if (allContent[categoryKey].articles) {
-                    allContent[categoryKey].articles.forEach(article => {
-                        if (article.title.toLowerCase().includes(searchTerm) || article.content.toLowerCase().includes(searchTerm)) {
-                            results.push({ ...article, categoryKey: categoryKey, categoryTitle: allContent[categoryKey].title });
-                        }
-                    });
-                }
-            }
-            showSearchResultsPage(results, searchTerm);
-        }
-
-        function showSearchResultsPage(results, searchTerm) {
-            pageTitle.textContent = `'${searchTerm}' üçün Axtarış Nəticələri`;
-            setActiveLink(null);
-            contentArea.className = "p-4 md:p-6"; // Reset content area class
-            let resultsHTML = `<div class="space-y-4">`;
-            if (results.length > 0) {
-                results.forEach(result => {
-                    resultsHTML += `
-                        <div class="bg-white dark:bg-zinc-800 p-5 rounded-lg clickable-list-item" data-category="${result.categoryKey}" data-article-id="${result.id}">
-                            <p class="text-sm text-amber-600 font-semibold">${result.categoryTitle}</p>
-                            <h4 class="font-bold text-lg">${result.title}</h4>
-                        </div>
-                    `;
-                });
-            } else {
-                resultsHTML += `<div class="bg-white dark:bg-zinc-800 p-5 rounded-lg text-center">Axtarışınıza uyğun nəticə tapılmadı.</div>`;
-            }
-            resultsHTML += `</div>`;
-            contentArea.innerHTML = resultsHTML;
-        }
-
-        // --- YENİ İMTAHAN MODULUNU YÜKLƏMƏ FUNKSİYASI ---
-        function loadNewExamModule() {
-            pageTitle.textContent = "İmtahan Portalı";
-            contentArea.className = "gradient-bg min-h-full flex items-center justify-center p-4"; // Set new class
-            
-            const examHTML = `
-                <div class="container mx-auto max-w-5xl">
-
-                    <!-- Student Login Page -->
-                    <div id="exam-login-page" class="page bg-gray-800/80 backdrop-blur-sm rounded-2xl shadow-2xl p-8 md:p-12 text-center">
-                        <h1 class="text-3xl md:text-4xl font-bold text-white mb-2">İmtahan Portalına Xoş Gəlmisiniz</h1>
-                        <p class="text-gray-400 mb-8">Zəhmət olmasa, başlamaq üçün adınızı daxil edin.</p>
-                        <div class="max-w-sm mx-auto">
-                            <div class="input-with-icon mb-4">
-                                <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"></path><circle cx="12" cy="7" r="4"></circle></svg>
-                                <input type="text" id="student-name" class="w-full px-4 py-3 bg-gray-700 border border-gray-600 text-white rounded-lg focus:outline-none focus:ring-2 focus:ring-yellow-500" placeholder="Adınız və Soyadınız">
-                            </div>
-                            <button id="exam-login-btn" class="w-full bg-yellow-500 text-black font-bold py-3 px-6 rounded-lg hover:bg-yellow-600 transition-all duration-300 shadow-lg hover:shadow-yellow-500/30 transform hover:scale-105">
-                                Daxil Ol
-                            </button>
-                        </div>
-                        <div class="mt-8">
-                            <button id="show-teacher-login-btn" class="text-sm text-gray-300 bg-gray-700 hover:bg-gray-600 font-semibold py-2 px-4 rounded-lg transition-colors">Müəllim Girişi</button>
-                        </div>
-                    </div>
-                    
-                    <!-- Teacher Login Page -->
-                    <div id="teacher-login-page" class="hidden page bg-gray-800/80 backdrop-blur-sm rounded-2xl shadow-2xl p-8 md:p-12 text-center">
-                        <h1 class="text-3xl md:text-4xl font-bold text-white mb-2">Müəllim Girişi</h1>
-                        <p class="text-gray-400 mb-8">Panelə daxil olmaq üçün məlumatları daxil edin.</p>
-                        <div class="max-w-sm mx-auto">
-                            <div class="input-with-icon mb-4">
-                                <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"></path><circle cx="12" cy="7" r="4"></circle></svg>
-                                <input type="text" id="teacher-username" class="w-full px-4 py-3 bg-gray-700 border border-gray-600 text-white rounded-lg focus:outline-none focus:ring-2 focus:ring-yellow-500" placeholder="İstifadəçi adı">
-                            </div>
-                            <div class="input-with-icon">
-                                <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="11" width="18" height="11" rx="2" ry="2"></rect><path d="M7 11V7a5 5 0 0 1 10 0v4"></path></svg>
-                                <input type="password" id="teacher-password" class="w-full px-4 py-3 bg-gray-700 border border-gray-600 text-white rounded-lg focus:outline-none focus:ring-2 focus:ring-yellow-500" placeholder="Şifrə">
-                            </div>
-                            <p id="teacher-login-error" class="text-red-500 text-sm mt-2 hidden">İstifadəçi adı və ya şifrə yanlışdır.</p>
-                            <button id="teacher-login-btn" class="w-full mt-4 bg-yellow-500 text-black font-bold py-3 px-6 rounded-lg hover:bg-yellow-600 transition-all duration-300 shadow-lg hover:shadow-yellow-500/30 transform hover:scale-105">
-                                Daxil Ol
-                            </button>
-                        </div>
-                        <div class="mt-8">
-                            <button id="back-to-student-login-btn" class="text-sm text-gray-300 bg-gray-700 hover:bg-gray-600 font-semibold py-2 px-4 rounded-lg transition-colors">Tələbə Girişinə Qayıt</button>
-                        </div>
-                    </div>
-
-                    <!-- Main Menu Page -->
-                    <div id="main-menu-page" class="hidden page">
-                        <div class="bg-gray-800/80 backdrop-blur-sm rounded-2xl shadow-2xl p-8 md:p-12">
-                            <div class="flex justify-between items-start mb-8">
-                                <div>
-                                    <h1 class="text-2xl md:text-3xl font-bold text-white mb-2">Salam, <span id="user-name-display"></span>!</h1>
-                                    <p class="text-gray-400">İmtahan vermək istədiyiniz sahəni seçin.</p>
-                                </div>
-                                <button id="exam-logout-btn" class="bg-red-600 text-white font-semibold py-2 px-4 rounded-lg hover:bg-red-700 transition-colors shadow-md flex-shrink-0">
-                                    Çıxış Et
-                                </button>
-                            </div>
-                            <div id="category-container" class="grid md:grid-cols-3 gap-8"></div>
-                        </div>
-                    </div>
-                    
-                    <!-- Question Bank Page -->
-                    <div id="bank-page" class="hidden page">
-                        <div class="bg-gray-800/80 backdrop-blur-sm rounded-2xl shadow-2xl p-8 md:p-12">
-                            <button id="back-to-main-menu-btn" class="mb-6 bg-gray-700 text-gray-300 font-semibold py-2 px-4 rounded-lg hover:bg-gray-600 transition-colors">
-                                &larr; Geri
-                            </button>
-                            <h1 id="bank-page-title" class="text-2xl md:text-3xl font-bold text-white mb-2">Sual Bankları</h1>
-                            <p class="text-gray-400 mb-8">Başlamaq üçün bir sual bankı seçin.</p>
-                            <div id="bank-container" class="grid sm:grid-cols-2 lg:grid-cols-3 gap-4"></div>
-                        </div>
-                    </div>
-
-                    <!-- Exam Page -->
-                    <div id="exam-page" class="hidden page">
-                        <div class="bg-gray-800/80 backdrop-blur-sm rounded-2xl shadow-2xl p-8 md:p-12 text-gray-200">
-                            <div class="flex justify-between items-center mb-6">
-                                <h1 id="exam-title" class="text-xl md:text-2xl font-bold text-white">İmtahan</h1>
-                                <div id="timer" class="text-lg font-semibold bg-red-500/20 text-red-300 px-4 py-2 rounded-lg">20:00</div>
-                            </div>
-                            <div id="questions-container" class="space-y-8"></div>
-                            <button id="submit-exam-btn" class="w-full mt-8 bg-yellow-500 text-black font-bold py-3 px-6 rounded-lg hover:bg-yellow-600 transition-colors duration-300 shadow-lg">
-                                İmtahanı Təsdiqlə
-                            </button>
-                        </div>
-                    </div>
-
-                    <!-- Report Page -->
-                    <div id="report-page" class="hidden page">
-                        <div class="bg-gray-800/80 backdrop-blur-sm rounded-2xl shadow-2xl p-8 md:p-12">
-                            <h1 class="text-3xl md:text-4xl font-bold text-center text-white mb-6">İmtahan Nəticəsi</h1>
-                            <div class="text-center mb-8">
-                                <div id="score-chart" class="w-32 h-32 mx-auto"></div>
-                                <p id="score-text" class="text-2xl font-bold text-gray-200 mt-4"></p>
-                                <p id="final-score-percentage" class="text-lg text-gray-400"></p>
-                            </div>
-                            <div class="grid md:grid-cols-2 gap-8 mb-8">
-                                <div class="bg-green-500/10 p-6 rounded-lg">
-                                    <h2 class="text-xl font-bold text-green-400 mb-4">Düzgün Cavablar (<span id="correct-count"></span>)</h2>
-                                    <ul id="correct-answers-list" class="space-y-2 text-sm max-h-48 overflow-y-auto text-gray-300"></ul>
-                                </div>
-                                <div class="bg-red-500/10 p-6 rounded-lg">
-                                    <h2 class="text-xl font-bold text-red-400 mb-4">Səhv Cavablar (<span id="incorrect-count"></span>)</h2>
-                                    <ul id="incorrect-answers-list" class="space-y-2 text-sm max-h-48 overflow-y-auto text-gray-300"></ul>
-                                </div>
-                            </div>
-                            <div class="bg-yellow-500/10 p-6 rounded-lg mb-8">
-                                <h2 class="text-xl font-bold text-yellow-400 mb-4">Yenidən Təkrar Edilməli Mövzular</h2>
-                                <div id="review-topics-list" class="flex flex-wrap gap-2"></div>
-                            </div>
-                            <div class="flex flex-col md:flex-row gap-4 justify-center">
-                                <button id="restart-portal-btn" class="w-full md:w-auto bg-gray-600 text-white font-bold py-3 px-8 rounded-lg hover:bg-gray-500 transition-colors">
-                                    Ana Səhifə
-                                </button>
-                                <button id="send-to-teacher-btn" class="w-full md:w-auto bg-yellow-500 text-black font-bold py-3 px-8 rounded-lg hover:bg-yellow-600 transition-colors">
-                                    Müəllimə Göndər
-                                </button>
-                            </div>
-                        </div>
-                    </div>
-                    
-                    <!-- Teacher Panel / Log Page -->
-                    <div id="teacher-panel-page" class="hidden page">
-                        <div class="bg-gray-800/80 backdrop-blur-sm rounded-2xl shadow-2xl p-8 md:p-12">
-                            <div class="flex justify-between items-center mb-6">
-                                <h1 class="text-2xl md:text-3xl font-bold text-white">Müəllim Paneli - Nəticələr</h1>
-                                <button id="teacher-logout-btn" class="bg-red-600 text-white font-semibold py-2 px-4 rounded-lg hover:bg-red-700">
-                                    Çıxış Et
-                                </button>
-                            </div>
-                            <div class="overflow-x-auto rounded-lg">
-                                <table class="min-w-full bg-gray-900">
-                                    <thead class="bg-yellow-500 text-black">
-                                        <tr>
-                                            <th class="text-left py-3 px-4 uppercase font-semibold text-sm">Tələbə</th>
-                                            <th class="text-left py-3 px-4 uppercase font-semibold text-sm">İmtahan</th>
-                                            <th class="text-left py-3 px-4 uppercase font-semibold text-sm">Faiz</th>
-                                            <th class="text-left py-3 px-4 uppercase font-semibold text-sm">Tarix</th>
-                                            <th class="text-center py-3 px-4 uppercase font-semibold text-sm">Ətraflı</th>
-                                        </tr>
-                                    </thead>
-                                    <tbody id="results-table-body" class="text-gray-300"></tbody>
-                                </table>
-                            </div>
-                            <div id="no-results-message" class="text-center py-8 text-gray-400 hidden">
-                                Hələ heç bir nəticə yoxdur.
-                            </div>
-                            <div class="text-right mt-6">
-                                <button id="clear-results-btn" class="bg-red-600 text-white font-bold py-2 px-4 rounded-lg hover:bg-red-700">
-                                    Bütün Nəticələri Sil
-                                </button>
-                            </div>
-                        </div>
-                    </div>
-                    
-                    <!-- Modal for "Send to Teacher" -->
-                    <div id="modal" class="hidden fixed inset-0 bg-black bg-opacity-70 flex items-center justify-center z-50 p-4">
-                        <div class="bg-gray-800 p-8 rounded-lg shadow-xl text-center max-w-sm w-full page border border-yellow-500">
-                            <h2 id="modal-title" class="text-2xl font-bold mb-4 text-white">Nəticə Qeydə Alındı!</h2>
-                            <p id="modal-text" class="text-gray-300">Nəticəniz müəllim panelində uğurla yadda saxlanıldı.</p>
-                            <button id="modal-close-btn" class="mt-6 bg-yellow-500 text-black font-bold px-6 py-2 rounded-lg">Bağla</button>
-                        </div>
-                    </div>
-
-                    <!-- Modal for Detailed Results -->
-                    <div id="details-modal" class="hidden fixed inset-0 bg-black bg-opacity-70 flex items-center justify-center z-50 p-4">
-                        <div class="bg-gray-800 rounded-lg shadow-xl max-w-2xl w-full max-h-[90vh] page border border-yellow-500/50">
-                            <div class="p-6 border-b border-gray-700 flex justify-between items-center">
-                                <h2 id="details-modal-title" class="text-2xl font-bold text-white">İmtahan Detalları</h2>
-                                <button id="details-modal-close-btn" class="text-gray-500 hover:text-gray-200 text-3xl">&times;</button>
-                            </div>
-                            <div id="details-modal-content" class="p-6 overflow-y-auto max-h-[calc(90vh-140px)]"></div>
-                            <div class="p-4 bg-gray-900/50 text-right rounded-b-lg">
-                                <button id="details-modal-close-btn-2" class="bg-gray-600 text-white px-6 py-2 rounded-lg hover:bg-gray-500">Bağla</button>
-                            </div>
-                        </div>
-                    </div>
-                    
-                    <!-- Custom Confirm Modal -->
-                    <div id="confirm-modal" class="hidden fixed inset-0 bg-black bg-opacity-70 flex items-center justify-center z-50 p-4">
-                        <div class="bg-gray-800 p-8 rounded-lg shadow-xl text-center max-w-sm w-full page border border-yellow-500">
-                            <h2 id="confirm-modal-title" class="text-2xl font-bold mb-4 text-white">Təsdiq</h2>
-                            <p id="confirm-modal-text" class="text-gray-300">Bu əməliyyatı yerinə yetirmək istədiyinizə əminsiniz?</p>
-                            <div class="mt-6 flex justify-center gap-4">
-                                <button id="confirm-modal-yes" class="bg-red-600 text-white font-bold px-6 py-2 rounded-lg hover:bg-red-700">Bəli</button>
-                                <button id="confirm-modal-no" class="bg-gray-600 text-white font-bold px-6 py-2 rounded-lg hover:bg-gray-500">Xeyr</button>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-            `;
-
-            const examJSScript = document.createElement('script');
-            examJSScript.innerHTML = `
-                (function() {
-                    // --- DATA BANK ---
-                    const examData = {
-                        networkAdmin: {
-                            name: "Şəbəkə İnzibatçılığı",
-                            icon: '<svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="w-12 h-12 mx-auto mb-4 text-yellow-400"><path d="M12 22c5.523 0 10-4.477 10-10S17.523 2 12 2 2 6.477 2 12s4.477 10 10 10z"></path><path d="M2 12h20"></path><path d="M12 2a15.3 15.3 0 0 1 4 10 15.3 15.3 0 0 1-4 10 15.3 15.3 0 0 1-4-10 15.3 15.3 0 0 1 4-10z"></path></svg>',
-                            banks: Array.from({ length: 10 }, (_, i) => ({
-                                name: \`Bank \${i + 1}\`,
-                                questions: [
-                                    { q: "OSI modelinin 3-cü qatı hansıdır?", options: ["Fiziki", "Şəbəkə", "Nəqliyyat", "Tətbiqi"], answer: "B", topic: "OSI Modeli" },
-                                    { q: "IP ünvanı hansı qatda işləyir?", options: ["Data Link", "Fiziki", "Şəbəkə", "Sessiya"], answer: "C", topic: "TCP/IP" },
-                                    { q: "192.168.1.1 hansı sinif IP ünvanıdır?", options: ["A", "B", "C", "D"], answer: "C", topic: "IP Ünvanlama" },
-                                    { q: "MAC ünvanı neçə bitdən ibarətdir?", options: ["32", "48", "64", "128"], answer: "B", topic: "MAC Ünvanları" },
-                                    { q: "Hansı protokol fayl transferi üçün istifadə olunur?", options: ["HTTP", "SMTP", "FTP", "DNS"], answer: "C", topic: "Protokollar" },
-                                    { q: "Subnet mask 255.255.255.0 nə deməkdir?", options: ["/8", "/16", "/24", "/32"], answer: "C", topic: "Subnetting" },
-                                    { q: "Router hansı cihazları birləşdirir?", options: ["Eyni şəbəkələri", "Fərqli şəbəkələri", "Sadəcə kompüterləri", "Sadəcə switchləri"], answer: "B", topic: "Şəbəkə Cihazları" },
-                                    { q: "DNS nə üçün istifadə olunur?", options: ["Domen adlarını IP-yə çevirmək", "Fayl göndərmək", "E-poçt göndərmək", "Təhlükəsizlik"], answer: "A", topic: "DNS" },
-                                    { q: "Hansı kabel növü daha sürətlidir?", options: ["Coaxial", "Twisted Pair", "Fiber Optik", "Hamısı eynidir"], answer: "C", topic: "Kabel Növləri" },
-                                    { q: "VLAN nədir?", options: ["Virtual Lokal Şəbəkə", "Geniş Ərazi Şəbəkəsi", "Real Lokal Şəbəkə", "Təhlükəsiz Şəbəkə"], answer: "A", topic: "VLAN" },
-                                    { q: "Ping əmri nəyi yoxlayır?", options: ["Sürəti", "Qoşulma vəziyyətini", "Təhlükəsizliyi", "Portları"], answer: "B", topic: "Şəbəkə Diaqnostikası" },
-                                    { q: "DHCP serverin rolu nədir?", options: ["IP ünvanları paylamaq", "Adları həll etmək", "Veb saytları host etmək", "Trafiki idarə etmək"], answer: "A", topic: "DHCP" },
-                                    { q: "Firewall nəyi qoruyur?", options: ["Viruslardan", "İcazəsiz girişlərdən", "Fiziki zədələrdən", "Elektrik kəsintilərindən"], answer: "B", topic: "Şəbəkə Təhlükəsizliyi" },
-                                    { q: "Hub və Switch arasındakı əsas fərq nədir?", options: ["Sürət", "Port sayı", "Trafiki ağıllı idarə etmə", "Qiymət"], answer: "C", topic: "Şəbəkə Cihazları" },
-                                    { q: "VPN nə üçün istifadə olunur?", options: ["Şəbəkəni sürətləndirmək", "Təhlükəsiz uzaqdan qoşulma", "Oyun oynamaq", "Fayl saxlamaq"], answer: "B", topic: "VPN" },
-                                    { q: "NAT nə deməkdir?", options: ["Network Address Translation", "Network Access Time", "New Address Technology", "Network Administration Tool"], answer: "A", topic: "NAT" },
-                                    { q: "PoE nəyi təmin edir?", options: ["Yüksək sürət", "Geniş əhatə dairəsi", "Şəbəkə kabeli üzərindən enerji", "Simsiz qoşulma"], answer: "C", topic: "Texnologiyalar" },
-                                    { q: "AP (Access Point) nə edir?", options: ["Simli şəbəkəni simsizə çevirir", "Routeri əvəz edir", "İnternet sürətini artırır", "Virusları bloklayır"], answer: "A", topic: "Simsiz Şəbəkələr" },
-                                    { q: "Hansı topologiyada bütün cihazlar bir mərkəzi nöqtəyə qoşulur?", options: ["Ring", "Bus", "Star", "Mesh"], answer: "C", topic: "Şəbəkə Topologiyaları" },
-                                    { q: "ICMP hansı protokoldur?", options: ["İnternet Nəzarət Mesaj Protokolu", "İnternet Qoşulma Protokolu", "İnternet İdarəetmə Protokolu", "İnternet Kommunikasiya Protokolu"], answer: "A", topic: "Protokollar" }
-                                ]
-                            }))
-                        },
-                        systemAdmin: {
-                            name: "Sistem Administratorluğu",
-                            icon: '<svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="w-12 h-12 mx-auto mb-4 text-yellow-400"><rect x="3" y="3" width="18" height="18" rx="2" ry="2"></rect><line x1="3" y1="9" x2="21" y2="9"></line><line x1="9" y1="21" x2="9" y2="9"></line></svg>',
-                            banks: Array.from({ length: 10 }, (_, i) => ({
-                                name: \`Bank \${i + 1}\`,
-                                questions: [
-                                    { q: "Linux-da faylları siyahılamaq üçün hansı əmr istifadə olunur?", options: ["dir", "list", "ls", "show"], answer: "C", topic: "Linux Əmrləri" },
-                                    { q: "Active Directory hansı şirkətin məhsuludur?", options: ["Apple", "Microsoft", "Google", "IBM"], answer: "B", topic: "Active Directory" },
-                                    { q: "Hansı virtualizasiya platforması deyil?", options: ["VMware", "Hyper-V", "VirtualBox", "Docker"], answer: "D", topic: "Virtualizasiya" },
-                                    { q: "RAID 1 nəyi təmin edir?", options: ["Sürət (Striping)", "Güzgüləmə (Mirroring)", "Hər ikisini", "Heç birini"], answer: "B", topic: "RAID" },
-                                    { q: "Serverlərin backup-ı nə üçün vacibdir?", options: ["Sürəti artırmaq", "Məlumat itkisinin qarşısını almaq", "Lisenziya tələbi", "Görünüş üçün"], answer: "B", topic: "Backup və Bərpa" },
-                                    { q: "Hansı fayl sistemi Windows-da standartdır?", options: ["ext4", "APFS", "NTFS", "HFS+"], answer: "C", topic: "Fayl Sistemləri" },
-                                    { q: "Powershell nədir?", options: ["Linux terminalı", "Windows üçün komanda mühiti", "Mac terminalı", "Bir proqramlaşdırma dili"], answer: "B", topic: "Windows Server" },
-                                    { q: "Sudo əmri nə üçün istifadə olunur?", options: ["Fayl silmək", "İstifadəçi dəyişmək", "Prosesi dayandırmaq", "İnzibatçı hüquqları ilə əmr icra etmək"], answer: "D", topic: "Linux İdarəetmə" },
-                                    { q: "Hansı port veb serverlər üçün standartdır (HTTP)?", options: ["21", "25", "80", "443"], answer: "C", topic: "Server Portları" },
-                                    { q: "GPO nə deməkdir?", options: ["Group Policy Object", "General Purpose Object", "Global Policy Option", "Group Permission Object"], answer: "A", topic: "Active Directory" },
-                                ]
-                            }))
-                        },
-                        itHelpdesk: {
-                            name: "IT Helpdesk",
-                            icon: '<svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="w-12 h-12 mx-auto mb-4 text-yellow-400"><path d="M18 2h-3a4 4 0 0 0-4 4v5a4 4 0 0 0 4 4h3v-2h-3a2 2 0 0 1-2-2V6a2 2 0 0 1 2-2h3Z"></path><path d="M21 14h-3a2 2 0 0 1-2-2V6"></path><path d="M3 12a9 9 0 1 0 9-9"></path></svg>',
-                            banks: Array.from({ length: 10 }, (_, i) => ({
-                                name: \`Bank \${i + 1}\`,
-                                questions: [
-                                    { q: "İstifadəçi internetə qoşula bilmirsə, ilk nəyi yoxlamalısınız?", options: ["IP ünvanını", "Kabelin qoşulu olub-olmadığını", "Brauzeri yeniləməyi", "Antivirusu söndürməyi"], answer: "B", topic: "Problemlərin Diaqnostikası" },
-                                    { q: "Printer çap etmirsə, hansı addım yanlışdır?", options: ["Printerin qoşulu olduğunu yoxlamaq", "Kağız olub-olmadığını yoxlamaq", "Dərhal yeni drayver yükləmək", "Çap növbəsini yoxlamaq"], answer: "C", topic: "Printer Nasazlıqları" },
-                                    { q: "“Mavi ekran” (BSOD) nəyin göstəricisidir?", options: ["Monitor problemi", "Ciddi sistem və ya hardware xətası", "Virus", "İnternet kəsintisi"], answer: "B", topic: "Hardware Problemləri" },
-                                    { q: "Hansı proqram uzaqdan dəstək üçün istifadə olunur?", options: ["Word", "Excel", "AnyDesk", "Photoshop"], answer: "C", topic: "Uzaqdan Dəstək" },
-                                    { q: "İstifadəçi parolunu unudubsa nə etməli?", options: ["Yeni kompüter verməli", "Parolu sıfırlamaq üçün prosedur izləməli", "Hesabını silməli", "Gözləməsini söyləməli"], answer: "B", topic: "İstifadəçi İdarəetməsi" },
-                                    { q: "Phishing nədir?", options: ["Bir növ virus", "Məlumat oğurlamaq üçün saxta veb sayt/e-poçt", "Şəbəkə hücumu", "Reklam proqramı"], answer: "B", topic: "Təhlükəsizlik Məlumatlılığı" },
-                                    { q: "Kompüter yavaş işləyirsə, ilk nə edilməlidir?", options: ["Format etmək", "Task Manager-i yoxlamaq", "Yeni RAM almaq", "Kompüteri dəyişmək"], answer: "B", topic: "Performans Problemləri" },
-                                    { q: "Hansı fayl uzantısı potensial təhlükəli ola bilər?", options: [".txt", ".jpg", ".exe", ".pdf"], answer: "C", topic: "Zərərli Proqramlar" },
-                                    { q: "Ticket sistemi nə üçün istifadə olunur?", options: ["İstifadəçi müraciətlərini qeydə almaq və izləmək", "Maaş hesablamaq", "İcazələri idarə etmək", "Faylları saxlamaq"], answer: "A", topic: "Helpdesk Prosedurları" },
-                                    { q: "E-poçt göndərilə bilmirsə, nəyi yoxlamaq lazımdır?", options: ["İnternet bağlantısını", "SMTP server ayarlarını", "Gələnlər qutusunu", "Hər ikisi (A və B)"], answer: "D", topic: "E-poçt Problemləri" },
-                                ]
-                            }))
-                        }
-                    };
-
-                    let currentUser = "";
-                    let currentCategoryKey = "";
-                    let currentBankIndex = -1;
-                    let userAnswers = {};
-                    let timerInterval;
-                    let chart;
-                    const RESULTS_STORAGE_KEY = 'examResultsLog';
-
-                    function showPage(pageId) {
-                        ['exam-login-page', 'main-menu-page', 'bank-page', 'exam-page', 'report-page', 'teacher-panel-page', 'teacher-login-page'].forEach(id => {
-                            const el = document.getElementById(id);
-                            if (el) el.classList.add('hidden');
-                        });
-                        const page = document.getElementById(pageId);
-                        if (page) {
-                            page.classList.remove('hidden');
-                            page.classList.add('page');
-                        }
-                    }
-
-                    function login() {
-                        const studentName = document.getElementById('student-name').value.trim();
-                        if (studentName) {
-                            currentUser = studentName;
-                            document.getElementById('user-name-display').textContent = currentUser;
-                            displayCategories();
-                            showPage('main-menu-page');
-                        } else {
-                            alert("Zəhmət olmasa, adınızı daxil edin.");
-                        }
-                    }
-
-                    function logout() {
-                        currentUser = ""; 
-                        document.getElementById('student-name').value = ''; 
-                        showPage('exam-login-page'); 
-                    }
-                    
-                    function loginTeacher() {
-                        const username = document.getElementById('teacher-username').value;
-                        const password = document.getElementById('teacher-password').value;
-                        const errorMsg = document.getElementById('teacher-login-error');
-
-                        if (username === 'cavadmikayil' && password === '1923') {
-                            errorMsg.classList.add('hidden');
-                            document.getElementById('teacher-username').value = '';
-                            document.getElementById('teacher-password').value = '';
-                            showTeacherPanel();
-                        } else {
-                            errorMsg.classList.remove('hidden');
-                        }
-                    }
-
-                    function logoutTeacher() {
-                        showPage('teacher-login-page');
-                    }
-
-                    function displayCategories() {
-                        const container = document.getElementById('category-container');
-                        container.innerHTML = '';
-                        for (const key in examData) {
-                            const category = examData[key];
-                            const card = \`
-                                <div class="bg-gray-800/80 p-6 rounded-xl card-hover cursor-pointer border border-gray-700" onclick="examModule.displayQuestionBanks('\${key}')">
-                                    \${category.icon}
-                                    <h3 class="text-xl font-bold text-center text-white">\${category.name}</h3>
-                                </div>
-                            \`;
-                            container.innerHTML += card;
-                        }
-                    }
-                    
-                    function displayQuestionBanks(categoryKey) {
-                        currentCategoryKey = categoryKey;
-                        const category = examData[categoryKey];
-                        document.getElementById('bank-page-title').textContent = \`\${category.name} - Sual Bankları\`;
-                        const container = document.getElementById('bank-container');
-                        container.innerHTML = '';
-                        category.banks.forEach((bank, index) => {
-                            const button = \`
-                                <button onclick="examModule.startExam('\${categoryKey}', \${index})" class="w-full text-left p-4 bg-gray-700 text-white rounded-lg border border-gray-600 hover:bg-gray-600 hover:border-yellow-500 transition-colors">
-                                    <span class="font-semibold">\${bank.name}</span>
-                                    <span class="block text-sm text-gray-400">\${bank.questions.length} sual</span>
-                                </button>
-                            \`;
-                            container.innerHTML += button;
-                        });
-                        showPage('bank-page');
-                    }
-
-                    function startExam(categoryKey, bankIndex) {
-                        currentCategoryKey = categoryKey;
-                        currentBankIndex = bankIndex;
-                        userAnswers = {};
-                        const exam = examData[categoryKey].banks[bankIndex];
-                        document.getElementById('exam-title').textContent = \`\${examData[categoryKey].name} - \${exam.name}\`;
-                        const questionsContainer = document.getElementById('questions-container');
-                        questionsContainer.innerHTML = '';
-                        exam.questions.forEach((q, index) => {
-                            const questionHTML = \`
-                                <div class="border-b border-gray-700 pb-6">
-                                    <p class="font-semibold text-lg mb-4 text-white">\${index + 1}. \${q.q}</p>
-                                    <div class="space-y-2">
-                                        \${q.options.map((opt, i) => {
-                                            const optionLetter = String.fromCharCode(65 + i);
-                                            return \`
-                                                <div class="text-gray-300">
-                                                    <input type="radio" id="q\${index}_opt\${i}" name="q\${index}" value="\${optionLetter}" class="mr-2 accent-yellow-500">
-                                                    <label for="q\${index}_opt\${i}">\${optionLetter}) \${opt}</label>
-                                                </div>
-                                            \`;
-                                        }).join('')}
-                                    </div>
-                                </div>
-                            \`;
-                            questionsContainer.innerHTML += questionHTML;
-                        });
-                        startTimer(20 * 60);
-                        showPage('exam-page');
-                    }
-
-                    function startTimer(duration) {
-                        let timer = duration, minutes, seconds;
-                        const timerDisplay = document.getElementById('timer');
-                        clearInterval(timerInterval);
-                        timerInterval = setInterval(() => {
-                            minutes = parseInt(timer / 60, 10);
-                            seconds = parseInt(timer % 60, 10);
-                            minutes = minutes < 10 ? "0" + minutes : minutes;
-                            seconds = seconds < 10 ? "0" + seconds : seconds;
-                            timerDisplay.textContent = minutes + ":" + seconds;
-                            if (--timer < 0) {
-                                clearInterval(timerInterval);
-                                submitExam();
-                            }
-                        }, 1000);
-                    }
-
-                    function submitExam() {
-                        clearInterval(timerInterval);
-                        const questions = examData[currentCategoryKey].banks[currentBankIndex].questions;
-                        questions.forEach((_, index) => {
-                            const selectedOption = document.querySelector(\`input[name="q\${index}"]:checked\`);
-                            userAnswers[index] = selectedOption ? selectedOption.value : null;
-                        });
-                        calculateAndShowResults();
-                    }
-
-                    function calculateAndShowResults() {
-                        const questions = examData[currentCategoryKey].banks[currentBankIndex].questions;
-                        let correctCount = 0;
-                        const correctAnswersList = document.getElementById('correct-answers-list');
-                        const incorrectAnswersList = document.getElementById('incorrect-answers-list');
-                        const reviewTopics = new Set();
-                        correctAnswersList.innerHTML = '';
-                        incorrectAnswersList.innerHTML = '';
-                        questions.forEach((q, index) => {
-                            const isCorrect = userAnswers[index] === q.answer;
-                            if (isCorrect) {
-                                correctCount++;
-                                correctAnswersList.innerHTML += \`<li><b>\${index + 1}.</b> \${q.q}</li>\`;
-                            } else {
-                                incorrectAnswersList.innerHTML += \`
-                                    <li class="text-red-400">
-                                        <b>\${index + 1}.</b> \${q.q}
-                                        <span class="block text-sm ml-4 text-gray-400">Sizin cavab: <b class="text-red-400">\${userAnswers[index] || 'Boş'}</b>, Düzgün cavab: <b class="text-green-400">\${q.answer}</b></span>
-                                    </li>\`;
-                                reviewTopics.add(q.topic);
-                            }
-                        });
-                        document.getElementById('correct-count').textContent = correctCount;
-                        document.getElementById('incorrect-count').textContent = questions.length - correctCount;
-                        const percentage = Math.round((correctCount / questions.length) * 100);
-                        document.getElementById('score-text').textContent = \`\${questions.length} sualdan \${correctCount} düzgün\`;
-                        document.getElementById('final-score-percentage').textContent = \`Yekun Nəticə: \${percentage}%\`;
-                        const reviewTopicsList = document.getElementById('review-topics-list');
-                        reviewTopicsList.innerHTML = '';
-                        if (reviewTopics.size > 0) {
-                            reviewTopics.forEach(topic => {
-                                reviewTopicsList.innerHTML += \`<span class="bg-yellow-400/20 text-yellow-300 text-xs font-semibold mr-2 px-2.5 py-0.5 rounded-full">\${topic}</span>\`;
-                            });
-                        } else {
-                            reviewTopicsList.innerHTML = '<p class="text-gray-400">Təkrara ehtiyac olan mövzu tapılmadı. Təbriklər!</p>';
-                        }
-                        renderScoreChart(percentage);
-                        saveResultToLog(correctCount, questions.length, percentage);
-                        showPage('report-page');
-                    }
-                    
-                    function saveResultToLog(score, total, percentage) {
-                        const resultData = {
-                            id: Date.now(),
-                            studentName: currentUser,
-                            categoryKey: currentCategoryKey,
-                            bankIndex: currentBankIndex,
-                            score: score,
-                            total: total,
-                            percentage: percentage,
-                            date: new Date().toLocaleString('az-AZ', { day: '2-digit', month: '2-digit', year: 'numeric', hour: '2-digit', minute: '2-digit' }),
-                            userAnswers: userAnswers
-                        };
-                        let results = JSON.parse(localStorage.getItem(RESULTS_STORAGE_KEY)) || [];
-                        results.push(resultData);
-                        localStorage.setItem(RESULTS_STORAGE_KEY, JSON.stringify(results));
-                    }
-
-                    function renderScoreChart(percentage) {
-                        const options = {
-                            chart: { height: '100%', type: 'radialBar' },
-                            series: [percentage],
-                            plotOptions: {
-                                radialBar: {
-                                    hollow: { size: '70%', background: 'transparent' },
-                                    track: { background: '#4A5568' },
-                                    dataLabels: {
-                                        name: { show: false },
-                                        value: { color: '#CBD5E0', fontSize: '24px', fontWeight: 'bold', offsetY: 10, formatter: (val) => val + '%' }
-                                    }
-                                },
-                            },
-                            stroke: { lineCap: 'round' },
-                            labels: ['Nəticə'],
-                            colors: [percentage > 70 ? '#48BB78' : percentage > 40 ? '#F59E0B' : '#F56565']
-                        };
-                        const chartContainer = document.getElementById('score-chart');
-                        chartContainer.innerHTML = ''; 
-                        chart = new ApexCharts(chartContainer, options);
-                        chart.render();
-                    }
-                    
-                    function restartPortal() {
-                        showPage('main-menu-page');
-                    }
-
-                    function sendToTeacher() {
-                        document.getElementById('modal-title').textContent = "Nəticə Qeydə Alındı!";
-                        document.getElementById('modal-text').textContent = "Nəticəniz müəllim panelində uğurla yadda saxlanıldı.";
-                        document.getElementById('modal').classList.remove('hidden');
-                    }
-                    
-                    function showTeacherPanel() {
-                        const results = JSON.parse(localStorage.getItem(RESULTS_STORAGE_KEY)) || [];
-                        const tableBody = document.getElementById('results-table-body');
-                        const noResultsMsg = document.getElementById('no-results-message');
-                        tableBody.innerHTML = '';
-
-                        if (results.length === 0) {
-                            noResultsMsg.classList.remove('hidden');
-                        } else {
-                            noResultsMsg.classList.add('hidden');
-                            results.sort((a, b) => b.id - a.id);
-                            results.forEach(res => {
-                                const category = examData[res.categoryKey];
-                                const row = \`
-                                    <tr class="border-b border-gray-700 hover:bg-gray-700/50">
-                                        <td class="py-3 px-4">\${res.studentName}</td>
-                                        <td class="py-3 px-4">\${category.name} - \${category.banks[res.bankIndex].name}</td>
-                                        <td class="py-3 px-4 font-semibold \${res.percentage > 70 ? 'text-green-400' : res.percentage > 40 ? 'text-yellow-400' : 'text-red-400'}">\${res.percentage}%</td>
-                                        <td class="py-3 px-4 text-sm">\${res.date}</td>
-                                        <td class="py-3 px-4 text-center">
-                                            <button onclick="examModule.showResultDetails(\${res.id})" class="bg-yellow-500 text-black text-xs font-bold py-1 px-3 rounded hover:bg-yellow-600 transition-colors">Ətraflı Bax</button>
-                                        </td>
-                                    </tr>
-                                \`;
-                                tableBody.innerHTML += row;
-                            });
-                        }
-                        showPage('teacher-panel-page');
-                    }
-
-                    function showResultDetails(resultId) {
-                        const results = JSON.parse(localStorage.getItem(RESULTS_STORAGE_KEY)) || [];
-                        const result = results.find(r => r.id === resultId);
-                        if (!result) return;
-
-                        const category = examData[result.categoryKey];
-                        const exam = category.banks[result.bankIndex];
-                        const questions = exam.questions;
-                        
-                        const modalTitle = document.getElementById('details-modal-title');
-                        const modalContent = document.getElementById('details-modal-content');
-                        
-                        modalTitle.textContent = \`\${result.studentName} - Nəticə Detalları\`;
-                        modalContent.innerHTML = '';
-
-                        questions.forEach((q, index) => {
-                            const userAnswer = result.userAnswers[index];
-                            const isCorrect = userAnswer === q.answer;
-                            const resultColor = isCorrect ? 'border-green-500' : 'border-red-500';
-                            const resultText = isCorrect ? '<span class="font-bold text-green-400">Düzgün</span>' : '<span class="font-bold text-red-400">Səhv</span>';
-                            
-                            const detailHTML = \`
-                                <div class="p-4 border-l-4 \${resultColor} bg-gray-700/50 mb-4 rounded-r-lg">
-                                    <p class="font-bold text-gray-200 mb-2">\${index + 1}. \${q.q}</p>
-                                    <p class="text-sm text-gray-400">Tələbənin cavabı: <b class="\${isCorrect ? 'text-green-400' : 'text-red-400'}">\${userAnswer || 'Boş'}</b></p>
-                                    <p class="text-sm text-gray-400">Düzgün cavab: <b class="text-yellow-400">\${q.answer}</b></p>
-                                    <div class="mt-2 text-right text-sm">\${resultText}</div>
-                                </div>
-                            \`;
-                            modalContent.innerHTML += detailHTML;
-                        });
-
-                        document.getElementById('details-modal').classList.remove('hidden');
-                    }
-                    
-                    function showConfirm(message, onConfirm) {
-                        const modal = document.getElementById('confirm-modal');
-                        const text = document.getElementById('confirm-modal-text');
-                        const yesBtn = document.getElementById('confirm-modal-yes');
-                        const noBtn = document.getElementById('confirm-modal-no');
-
-                        text.textContent = message;
-                        modal.classList.remove('hidden');
-
-                        const yesHandler = () => {
-                            onConfirm();
-                            modal.classList.add('hidden');
-                            cleanup();
-                        };
-
-                        const noHandler = () => {
-                            modal.classList.add('hidden');
-                            cleanup();
-                        };
-                        
-                        const cleanup = () => {
-                            yesBtn.removeEventListener('click', yesHandler);
-                            noBtn.removeEventListener('click', noHandler);
-                        };
-
-                        yesBtn.addEventListener('click', yesHandler);
-                        noBtn.addEventListener('click', noHandler);
-                    }
-
-                    function clearResults() {
-                        showConfirm(
-                            "Bütün nəticələri silmək istədiyinizə əminsiniz? Bu əməliyyat geri qaytarıla bilməz.",
-                            () => {
-                                localStorage.removeItem(RESULTS_STORAGE_KEY);
-                                showTeacherPanel(); 
-                            }
-                        );
-                    }
-                    
-                    // --- Make functions globally accessible inside the module ---
-                    window.examModule = {
-                        displayQuestionBanks,
-                        startExam,
-                        showResultDetails
-                    };
-                    
-                    // --- Add Event Listeners ---
-                    document.getElementById('exam-login-btn').addEventListener('click', login);
-                    document.getElementById('show-teacher-login-btn').addEventListener('click', () => showPage('teacher-login-page'));
-                    document.getElementById('teacher-login-btn').addEventListener('click', loginTeacher);
-                    document.getElementById('back-to-student-login-btn').addEventListener('click', () => showPage('exam-login-page'));
-                    document.getElementById('exam-logout-btn').addEventListener('click', logout);
-                    document.getElementById('back-to-main-menu-btn').addEventListener('click', () => showPage('main-menu-page'));
-                    document.getElementById('submit-exam-btn').addEventListener('click', submitExam);
-                    document.getElementById('restart-portal-btn').addEventListener('click', restartPortal);
-                    document.getElementById('send-to-teacher-btn').addEventListener('click', sendToTeacher);
-                    document.getElementById('teacher-logout-btn').addEventListener('click', logoutTeacher);
-                    document.getElementById('clear-results-btn').addEventListener('click', clearResults);
-                    document.getElementById('modal-close-btn').addEventListener('click', () => document.getElementById('modal').classList.add('hidden'));
-                    document.getElementById('details-modal-close-btn').addEventListener('click', () => document.getElementById('details-modal').classList.add('hidden'));
-                    document.getElementById('details-modal-close-btn-2').addEventListener('click', () => document.getElementById('details-modal').classList.add('hidden'));
-
-
-                    // Initial setup
-                    showPage('exam-login-page');
-                })();
-            `;
-
-            contentArea.innerHTML = examHTML;
-            contentArea.appendChild(examJSScript);
-        }
-
-        // --- HADİSƏ DİNLEYİCİLƏRİ ---
-        document.addEventListener('DOMContentLoaded', () => {
-            // Tema yoxlanışı
-            if (localStorage.getItem('theme') === 'dark' || !localStorage.getItem('theme')) {
-                document.documentElement.classList.add('dark');
-                themeToggle.innerHTML = '<i class="fas fa-sun"></i>';
-            } else {
-                document.documentElement.classList.remove('dark');
-                themeToggle.innerHTML = '<i class="fas fa-moon"></i>';
-            }
-            // Login yoxlanışı
-            if (localStorage.getItem('rememberedUser') === 'true') {
-                loginContainer.classList.add('hidden');
-                appContainer.classList.remove('hidden');
-                showHomePage();
-            }
-        });
-
-        loginBtn.addEventListener('click', handleLogin);
-        passwordInput.addEventListener('keyup', (e) => { if (e.key === 'Enter') handleLogin(); });
-        usernameInput.addEventListener('keyup', (e) => { if (e.key === 'Enter') handleLogin(); });
-        
-        document.getElementById('logout-link').addEventListener('click', (e) => { e.preventDefault(); handleLogout(); });
-        menuBtn.addEventListener('click', toggleMenu);
-        overlay.addEventListener('click', toggleMenu);
-        document.getElementById('logo-link').addEventListener('click', (e) => { e.preventDefault(); showHomePage(); });
-        document.getElementById('home-link').addEventListener('click', (e) => { e.preventDefault(); showHomePage(); });
-        document.getElementById('labs-link').addEventListener('click', (e) => { e.preventDefault(); showArticleListPage('labs'); });
-        
-        // İmtahan linki üçün yeni event listener
-        document.getElementById('exam-link').addEventListener('click', (e) => {
-            e.preventDefault();
-            loadNewExamModule();
-            setActiveLink(e.currentTarget);
-            if(window.innerWidth < 768) toggleMenu();
-        });
-        
-        document.getElementById('course-materials-link').addEventListener('click', (e) => {
-            e.preventDefault();
-            if (localStorage.getItem('rememberedCourseUser') === 'true') {
-                showCourseLinktreePage();
-            } else {
-                showCourseLoginPage();
-            }
-        });
-
-        closeCourseLoginBtn.addEventListener('click', hideCourseLoginPage);
-        backFromCourseLoginBtn.addEventListener('click', hideCourseLoginPage);
-        courseLoginBtn.addEventListener('click', handleCourseLogin);
-        coursePasswordInput.addEventListener('keyup', (e) => { if (e.key === 'Enter') handleCourseLogin(); });
-        courseUsernameInput.addEventListener('keyup', (e) => { if (e.key === 'Enter') handleCourseLogin(); });
-
-        searchInput.addEventListener('input', handleSearch);
-        themeToggle.addEventListener('click', () => {
-            document.documentElement.classList.toggle('dark');
-            if (document.documentElement.classList.contains('dark')) {
-                localStorage.setItem('theme', 'dark');
-                themeToggle.innerHTML = '<i class="fas fa-sun"></i>';
-            } else {
-                localStorage.setItem('theme', 'light');
-                themeToggle.innerHTML = '<i class="fas fa-moon"></i>';
-            }
-        });
-
-        allLinks.forEach(link => {
-            const categoryKey = link.id.replace('-link', '');
-            if (allContent[categoryKey] && !['exam', 'labs', 'course-materials'].includes(categoryKey)) {
-                link.addEventListener('click', (e) => {
-                    e.preventDefault();
-                    showArticleListPage(categoryKey);
-                });
-            }
-        });
-
-        contentArea.addEventListener('click', (e) => {
-            // Bu event listener artıq imtahanla bağlı deyil,
-            // çünki imtahan modulu öz daxili event listenerlərini idarə edir.
-            const articleItem = e.target.closest('[data-article-id]');
-            const backButton = e.target.closest('#back-to-list-btn');
-            const courseHeader = e.target.closest('.course-header');
-            const chapterLink = e.target.closest('.chapter-link');
-            const copyBtn = e.target.closest('.copy-code-btn');
-            const resetProgressBtn = e.target.closest('#reset-progress-btn');
-
-            if (articleItem) {
-                showSingleArticlePage(articleItem.dataset.category, articleItem.dataset.articleId);
-            }
-            if (backButton) {
-                showArticleListPage(backButton.dataset.category);
-            }
-            if (courseHeader) {
-                const chapterList = courseHeader.nextElementSibling;
-                courseHeader.classList.toggle('active');
-                if (chapterList.style.maxHeight) {
-                    chapterList.style.maxHeight = null;
-                } else {
-                    chapterList.style.maxHeight = chapterList.scrollHeight + "px";
-                }
-            }
-            if (chapterLink && chapterLink.href.endsWith('#') === false) {
-                const chapterId = chapterLink.dataset.chapterId;
-                saveCourseProgress(chapterId);
-                if(!chapterLink.querySelector('.fa-check-circle')) {
-                    chapterLink.insertAdjacentHTML('afterbegin', '<i class="fas fa-check-circle mr-2"></i>');
-                }
-                chapterLink.classList.add('visited');
-            }
-            if(copyBtn) {
-                const pre = copyBtn.parentElement;
-                const code = pre.querySelector('code').innerText;
-                const textArea = document.createElement('textarea');
-                textArea.value = code;
-                document.body.appendChild(textArea);
-                textArea.select();
-                document.execCommand('copy');
-                document.body.removeChild(textArea);
-                copyBtn.innerHTML = '<i class="fas fa-check"></i>';
-                setTimeout(() => { copyBtn.innerHTML = '<i class="fas fa-copy"></i>'; }, 2000);
-            }
-            if(resetProgressBtn) {
-                localStorage.removeItem('courseProgress');
-                showCourseLinktreePage();
-            }
-        });
-
-    </script>
+  </section>
+
+  <dialog id="dialog" class="dialog">
+    <form method="dialog" class="dialog-inner">
+      <h2 id="dialog-title"></h2>
+      <div id="dialog-body" class="dialog-body"></div>
+      <div class="dialog-actions" id="dialog-actions"></div>
+    </form>
+  </dialog>
+
+  <div id="toast" class="toast" role="status" aria-live="polite" hidden></div>
+
+  <script src="assets/config.js"></script>
+  <script src="assets/xlsx.js"></script>
+  <script src="assets/app.js"></script>
 </body>
 </html>
